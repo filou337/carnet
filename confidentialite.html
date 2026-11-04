@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#f9f6f2" />
+<title>Politique de confidentialité · à deux.</title>
+<meta name="description" content="Comment l'appli « à deux. » protège vos données : chiffrement de bout en bout, aucune publicité, vos droits RGPD." />
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+<style>
+:root{--bg:#f8f6f2;--paper:#fffdfa;--ink:#302a29;--muted:#7d7572;--line:#eee8e2;--brand:#bd7368;--brand-strong:#96564f;--brand-pale:#f5e8e2;--sage-pale:#edf2e9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:var(--brand-strong);text-underline-offset:3px}
+a:focus-visible{outline:3px solid #5747a5;outline-offset:3px;border-radius:4px}
+.wrap{max-width:780px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:40px}
+.brand{display:flex;align-items:center;gap:10px;font:700 24px/1 Georgia,serif;letter-spacing:-.03em;color:var(--ink);text-decoration:none}
+.brand span.mark{width:36px;height:36px;border-radius:12px;background:var(--brand);display:grid;place-items:center}
+.brand b{color:var(--brand)}
+.back{font-size:14px;font-weight:650;text-decoration:none;border:1px solid var(--line);background:var(--paper);padding:8px 14px;border-radius:12px;white-space:nowrap}
+.kicker{font-size:11px;font-weight:750;letter-spacing:.18em;text-transform:uppercase;color:var(--brand)}
+h1{font:400 clamp(34px,7vw,52px)/1.08 Georgia,serif;letter-spacing:-.03em;margin:10px 0 14px}
+h1 em{color:var(--brand)}
+.meta{color:var(--muted);font-size:14px;margin:0 0 32px}
+h2{font:400 26px/1.25 Georgia,serif;letter-spacing:-.02em;margin:46px 0 12px;scroll-margin-top:20px}
+h3{font-size:16px;margin:24px 0 6px}
+p,li{color:#4a4341}
+ul{padding-left:22px}
+li{margin:5px 0}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px 24px;box-shadow:0 16px 46px rgba(69,43,29,.05)}
+.summary{background:linear-gradient(150deg,#fbefe9,#f5e3dc);border:0}
+.summary ul{list-style:none;padding:0;margin:0}
+.summary li{padding-left:30px;position:relative;margin:10px 0}
+.summary li:before{content:"♡";position:absolute;left:4px;top:0;color:var(--brand-strong);font-weight:700}
+.toc{columns:2;column-gap:28px;font-size:14px;padding-left:18px}
+.toc li{break-inside:avoid}
+.table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
+.table th,.table td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+.table th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:750}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.note{background:var(--sage-pale);border-radius:16px;padding:14px 18px;font-size:15px}
+.todo{background:#fff3c4;color:#6b5100;border-radius:6px;padding:1px 7px;font-weight:650}
+footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+@media (max-width:600px){.toc{columns:1}.card{padding:18px}.table th,.table td{padding:9px 8px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><span class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.7a5.6 5.6 0 0 0-7.9 0l-.9.9-.9-.9a5.6 5.6 0 1 0-7.9 7.9l.9.9L12 21l7.9-7.5.9-.9a5.6 5.6 0 0 0 0-7.9Z"/></svg></span><span>à deux<b>.</b></span></a>
+    <a class="back" href="./">← Retour à l’appli</a>
+  </header>
+
+  <div class="kicker">Vos données, votre intimité</div>
+  <h1>Politique de <em>confidentialité.</em></h1>
+  <p class="meta">Version du 4 novembre 2026 · Appli « à deux. » · <a href="https://filou337.github.io/carnet/">filou337.github.io/carnet</a></p>
+
+  <section class="card summary" aria-label="En bref">
+    <ul>
+      <li><strong>Ce que vous écrivez reste entre vous deux.</strong> Vos réponses, prières, plans, budgets, photos et rendez-vous sont chiffrés sur votre appareil avant d’être envoyés. Personne d’autre ne peut les lire, pas même nous.</li>
+      <li><strong>Aucune publicité, aucune revente, aucune mesure d’audience.</strong></li>
+      <li><strong>Pour fonctionner, l’appli ne connaît que le strict minimum :</strong> votre adresse e-mail et des informations techniques.</li>
+      <li><strong>Vous gardez la main :</strong> exporter vos données, supprimer votre compte, depuis l’appli, à tout moment.</li>
+    </ul>
+  </section>
+
+  <h2 id="sommaire">Sommaire</h2>
+  <ol class="toc">
+    <li><a href="#responsable">Qui est responsable ?</a></li>
+    <li><a href="#donnees">Quelles données ?</a></li>
+    <li><a href="#chiffrement">Le chiffrement de bout en bout</a></li>
+    <li><a href="#sensibles">Vos réflexions de foi</a></li>
+    <li><a href="#finalites">Pourquoi et sur quelle base ?</a></li>
+    <li><a href="#jamais">Ce que nous ne faisons jamais</a></li>
+    <li><a href="#prestataires">Nos prestataires</a></li>
+    <li><a href="#conservation">Combien de temps ?</a></li>
+    <li><a href="#securite">Sécurité</a></li>
+    <li><a href="#droits">Vos droits</a></li>
+    <li><a href="#age">Âge minimum</a></li>
+    <li><a href="#changements">Changements</a></li>
+  </ol>
+
+  <h2 id="responsable">1. Qui est responsable de vos données ?</h2>
+  <p>L’appli « à deux. » est un projet personnel et non commercial, édité par <strong>Philippe R.</strong>, particulier résidant en France, responsable du traitement au sens du Règlement général sur la protection des données (RGPD).</p>
+  <p>Pour toute question sur vos données ou pour exercer vos droits : <span class="todo">adresse de contact à venir</span>.</p>
+
+  <h2 id="donnees">2. Quelles données sont traitées ?</h2>
+  <h3>Votre compte</h3>
+  <ul>
+    <li><strong>Votre adresse e-mail</strong> : pour vous connecter et, si vous le demandez, recevoir un e-mail de réinitialisation du mot de passe.</li>
+    <li><strong>Votre mot de passe</strong> : il est géré par Firebase Authentication (Google), qui le conserve sous forme protégée (hachée). Nous n’y avons jamais accès.</li>
+    <li><strong>Des informations techniques</strong> : un identifiant de compte, les dates de création et de dernière connexion, et l’adresse IP utilisée lors des connexions (journaux de sécurité de Google).</li>
+    <li><strong>Votre clé personnelle</strong>, rangée sous forme chiffrée : verrouillée par votre mot de passe et par votre code de secours. Sans eux, elle est illisible.</li>
+  </ul>
+  <h3>Le contenu de votre carnet (chiffré)</h3>
+  <p>Prénoms et petits mots de profil, photo de profil, date de début de votre histoire, réponses à la question du jour, prières et pensées, notes et réflexions sur les finances, budgets et dépenses, rendez-vous du calendrier (avec heure et lieu), plans et projets. Ces contenus sont <strong>chiffrés de bout en bout</strong> (voir point 3) : sur nos serveurs, ce n’est qu’une suite de caractères illisibles.</p>
+  <h3>Ce que le serveur voit malgré tout</h3>
+  <p>Pour synchroniser vos deux appareils, la base de données connaît quelques informations techniques non chiffrées : les identifiants des deux comptes membres d’un même espace, le nombre et la taille des éléments chiffrés, l’heure de leur dernière modification et un identifiant aléatoire d’appareil.</p>
+  <h3>Sur votre appareil</h3>
+  <p>L’appli enregistre vos données et vos réglages dans le stockage de votre navigateur, pour fonctionner même sans réseau. Elle garde aussi une copie de la page pour le mode hors ligne. Elle ne dépose <strong>aucun cookie publicitaire ni de mesure d’audience</strong>.</p>
+  <h3>La protection contre les robots</h3>
+  <p>Pour empêcher des programmes malveillants d’utiliser notre base de données, l’appli utilise Firebase App Check avec <strong>reCAPTCHA Enterprise</strong> (Google). Ce service analyse de façon invisible des informations sur votre appareil, votre navigateur et votre utilisation de la page, afin de distinguer un humain d’un robot. Ces informations sont traitées par Google selon ses <a href="https://policies.google.com/privacy?hl=fr" target="_blank" rel="noopener">règles de confidentialité</a> et ses <a href="https://policies.google.com/terms?hl=fr" target="_blank" rel="noopener">conditions d’utilisation</a>.</p>
+
+  <h2 id="chiffrement">3. Le chiffrement de bout en bout</h2>
+  <p>Chaque couple partage un <strong>code d’espace</strong> secret. Sur votre appareil, ce code sert à fabriquer une clé de chiffrement (AES-256-GCM). Votre contenu est chiffré avec cette clé <em>avant</em> de quitter votre téléphone, et seul l’appareil de votre moitié, qui connaît le même code, peut le déchiffrer.</p>
+  <p class="note">Le code d’espace et la clé ne sont jamais envoyés en clair. Ni l’éditeur de l’appli, ni Google, ni personne d’autre ne peut lire ce que vous écrivez. La contrepartie : si vous perdez à la fois votre mot de passe, votre code de secours et le code de l’espace, <strong>personne ne pourra récupérer vos données</strong>. Pensez à exporter une sauvegarde de temps en temps (Paramètres → Nos données).</p>
+
+  <h2 id="sensibles">4. Vos réflexions de foi : des données « sensibles »</h2>
+  <p>L’appli accompagne les couples dans une démarche chrétienne. Vos prières, réponses ou réflexions peuvent révéler vos <strong>convictions religieuses</strong>, une catégorie particulière de données protégée par l’article 9 du RGPD.</p>
+  <p>Elles ne sont enregistrées qu’avec votre <strong>consentement explicite</strong>, donné en cochant la case prévue lors de la création de votre compte. Elles sont chiffrées de bout en bout et ne sont jamais analysées. Vous pouvez retirer votre consentement à tout moment en effaçant ces contenus ou en supprimant votre compte.</p>
+
+  <h2 id="finalites">5. Pourquoi ces données, et sur quelle base légale ?</h2>
+  <div class="scroll">
+  <table class="table">
+    <thead><tr><th>À quoi ça sert</th><th>Base légale (RGPD)</th></tr></thead>
+    <tbody>
+      <tr><td>Créer et gérer votre compte, vous connecter, réinitialiser votre mot de passe</td><td>Exécution du service que vous demandez (art. 6.1.b)</td></tr>
+      <tr><td>Synchroniser votre carnet entre vos deux appareils</td><td>Exécution du service (art. 6.1.b)</td></tr>
+      <tr><td>Enregistrer vos réflexions de foi</td><td>Consentement explicite (art. 9.2.a)</td></tr>
+      <tr><td>Protéger le service contre les robots et les abus (App Check, règles d’accès, journaux de sécurité)</td><td>Intérêt légitime : garantir la sécurité du service (art. 6.1.f)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 id="jamais">6. Ce que nous ne faisons jamais</h2>
+  <ul>
+    <li>Pas de publicité, pas de ciblage, pas de profilage.</li>
+    <li>Pas de vente ni de location de vos données, à qui que ce soit.</li>
+    <li>Pas de mesure d’audience ni d’outil de statistiques.</li>
+    <li>Pas d’analyse de vos contenus, par un humain ou par une intelligence artificielle : ils sont chiffrés.</li>
+  </ul>
+
+  <h2 id="prestataires">7. Nos prestataires</h2>
+  <p>Pour fonctionner, l’appli s’appuie sur quelques services, qui agissent pour notre compte :</p>
+  <div class="scroll">
+  <table class="table">
+    <thead><tr><th>Prestataire</th><th>Rôle</th><th>Où</th></tr></thead>
+    <tbody>
+      <tr><td>Google Firebase<br><small>(Google Ireland Ltd)</small></td><td>Comptes (Authentication), base de données chiffrée (Realtime Database), protection anti-robots (App Check, reCAPTCHA Enterprise)</td><td>Base de données en Belgique (Union européenne). Certains traitements de Google peuvent avoir lieu hors UE.</td></tr>
+      <tr><td>GitHub Pages<br><small>(GitHub Inc.)</small></td><td>Hébergement de la page de l’appli. Comme tout hébergeur web, GitHub peut enregistrer votre adresse IP dans ses journaux techniques.</td><td>États-Unis</td></tr>
+      <tr><td>Cloudflare (cdnjs) et Google (gstatic)</td><td>Fourniture de bibliothèques techniques (Firebase, générateur de QR code)</td><td>Réseau mondial</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Les transferts hors de l’Union européenne sont encadrés par le cadre de protection des données UE–États-Unis (<em>EU-U.S. Data Privacy Framework</em>) et/ou par les clauses contractuelles types de la Commission européenne.</p>
+  <h3>Les liens que vous choisissez d’ouvrir</h3>
+  <p>Les boutons « Google Maps », « Itinéraire » et « + Google Agenda » du calendrier, ainsi que les liens vers les textes bibliques ou les enseignements, ouvrent des sites extérieurs. Ils n’envoient des informations (par exemple l’adresse d’un rendez-vous) <strong>que si vous cliquez</strong>, et ces sites appliquent alors leur propre politique de confidentialité. Le fichier d’agenda (.ics) est créé sur votre appareil, sans passer par nous.</p>
+
+  <h2 id="conservation">8. Combien de temps vos données sont-elles conservées ?</h2>
+  <ul>
+    <li><strong>Votre compte et votre clé chiffrée</strong> : tant que votre compte existe. Ils sont effacés dès que vous supprimez votre compte.</li>
+    <li><strong>Votre espace partagé</strong> : quand une personne quitte l’espace ou supprime son compte, le contenu reste disponible pour l’autre. Quand le dernier membre part, l’espace entier est effacé.</li>
+    <li><strong>Les comptes inactifs</strong> : un compte sans aucune connexion depuis 3 ans pourra être supprimé, après un e-mail de prévenance.</li>
+    <li><strong>Les journaux techniques et de sécurité</strong> de nos prestataires : selon leurs propres durées, généralement quelques semaines à quelques mois.</li>
+    <li><strong>Sur votre appareil</strong> : jusqu’à ce que vous vous déconnectiez, supprimiez votre compte ou effaciez les données du navigateur.</li>
+  </ul>
+
+  <h2 id="securite">9. Comment vos données sont protégées</h2>
+  <ul>
+    <li>Chiffrement de bout en bout du contenu (AES-256-GCM) et connexions chiffrées (HTTPS).</li>
+    <li>Règles d’accès strictes : seuls les deux comptes membres d’un espace peuvent le lire ou y écrire.</li>
+    <li>Votre clé personnelle est verrouillée par votre mot de passe et par un code de secours (dérivation PBKDF2, 200 000 itérations).</li>
+    <li>Protection anti-robots (Firebase App Check).</li>
+  </ul>
+  <p>Aucun système n’est infaillible. En cas de violation de données présentant un risque pour vous, nous vous en informerons et préviendrons la CNIL, comme le prévoit le RGPD.</p>
+
+  <h2 id="droits">10. Vos droits</h2>
+  <p>Vous disposez des droits d’accès, de rectification, d’effacement, de limitation, d’opposition, de portabilité et du droit de retirer votre consentement. Vous pouvez aussi définir des directives sur le sort de vos données après votre décès. La plupart de ces droits s’exercent directement dans l’appli :</p>
+  <ul>
+    <li><strong>Consulter et corriger</strong> : tout votre contenu est visible et modifiable dans l’appli.</li>
+    <li><strong>Récupérer vos données</strong> (portabilité) : Paramètres → Nos données → « Exporter en JSON ».</li>
+    <li><strong>Supprimer votre compte et vos données</strong> : Paramètres → Mon compte → « Supprimer mon compte ».</li>
+  </ul>
+  <p>Pour toute autre demande : <span class="todo">adresse de contact à venir</span>. Nous répondons dans un délai d’un mois. Comme votre contenu est chiffré, nous ne pouvons ni le lire ni vous en transmettre une copie : votre demande portera sur les données de compte et les données techniques.</p>
+  <p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la <strong>CNIL</strong> : <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">cnil.fr/fr/plaintes</a>.</p>
+
+  <h2 id="age">11. Âge minimum</h2>
+  <p>L’appli est réservée aux personnes de <strong>18 ans ou plus</strong>. Nous ne collectons pas sciemment de données concernant des mineurs. Si vous pensez qu’un mineur a créé un compte, contactez-nous pour qu’il soit supprimé.</p>
+
+  <h2 id="changements">12. Changements de cette politique</h2>
+  <p>Cette politique peut évoluer, par exemple si l’appli propose de nouvelles fonctions. La date de la version en vigueur est indiquée en haut de cette page. En cas de changement important, vous en serez informé(e) dans l’appli.</p>
+
+  <footer>
+    <p>« à deux. » · Construire ensemble, avec ce que nous avons. · <a href="./">Retour à l’appli</a></p>
+  </footer>
+</div>
+</body>
+</html>

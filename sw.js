@@ -2,7 +2,7 @@
 // - la page : réseau d'abord (toujours la dernière version), sinon la copie en cache ;
 // - les bibliothèques versionnées (Firebase, QR code) : cache d'abord, elles ne changent jamais ;
 // - tout le reste (base Firebase, connexion…) passe sans être touché.
-const VERSION = 'adeux-v1';
+const VERSION = 'adeux-v2';
 const SHELL = ['./', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png'];
 const LIBS = [/^https:\/\/www\.gstatic\.com\/firebasejs\/\d+\.\d+\.\d+\//, /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/qrcode-generator\//];
 
@@ -18,7 +18,9 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (req.mode === 'navigate' && url.origin === location.origin) {
+  const scopePath = new URL(self.registration.scope).pathname;
+  const isApp = url.pathname === scopePath || url.pathname === scopePath + 'index.html';
+  if (req.mode === 'navigate' && url.origin === location.origin && isApp) {
     e.respondWith((async () => {
       const cache = await caches.open(VERSION);
       try {
