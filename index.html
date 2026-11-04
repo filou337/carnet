@@ -506,7 +506,7 @@ function toast(message){const el=$('#toast');el.textContent=message;el.classList
 function pageIntro(kicker,title,sub,button=''){return `<header class="page-header"><div><span class="eyebrow">${kicker}</span><h1 class="title-display">${title}</h1><p class="lead">${sub}</p></div>${button}</header>`}
 function empty(title,msg){return `<div class="empty-state">${icons.heart}<strong>${esc(title)}</strong><div>${esc(msg)}</div></div>`}
 function updateHeader(){const titles={accueil:'Accueil',calendrier:'Notre calendrier',plans:'Nos plans',bible:'Parole à deux',projets:'Nos projets',depenses:'Nos dépenses',parametres:'Paramètres'};$('#topTitle').textContent=titles[page];$('#todayLabel').textContent=new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long'}).format(today);$('#topAvatar1').innerHTML=avatarInner('p1');$('#topAvatar2').innerHTML=avatarInner('p2');$$('.nav button').forEach(b=>{const active=b.dataset.page===page;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')})}
-const PHOTO_MAX=24000;function okPhoto(v){return typeof v==='string'&&v.length<=PHOTO_MAX&&/^data:image\/jpeg;base64,[A-Za-z0-9+/]+=*$/.test(v)}function sanitizePhotos(x){x=x&&typeof x==='object'?x:{};return {p1:okPhoto(x.p1)?x.p1:'',p2:okPhoto(x.p2)?x.p2:''}}function avatarInner(n){const ph=state.photos&&state.photos[n];return ph?`<img src="${esc(ph)}" alt="">`:esc(initials(state.settings[n]))}
+function okPhoto(v){return typeof v==='string'&&v.length<=24000&&/^data:image\/jpeg;base64,[A-Za-z0-9+/]+=*$/.test(v)}function sanitizePhotos(x){x=x&&typeof x==='object'?x:{};return {p1:okPhoto(x.p1)?x.p1:'',p2:okPhoto(x.p2)?x.p2:''}}function avatarInner(n){const ph=state.photos&&state.photos[n];return ph?`<img src="${esc(ph)}" alt="">`:esc(initials(state.settings[n]))}
 function initials(name){return String(name||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toLocaleUpperCase('fr-FR')||'?'}
 // Heure, lieu, Google Maps et Google Agenda pour les événements.
 const timeOk=v=>/^([01]\d|2[0-3]):[0-5]\d$/.test(v||'');
@@ -832,6 +832,8 @@ function updateCarnetProgress(part){
 // Configuration du projet Firebase (valeurs publiques, à copier depuis la console Firebase).
 const FIREBASE_CONFIG={apiKey:"AIzaSyCiS4-cyRRqoFUvZ8a1rcbsC0n7PeatrQw",authDomain:"coeurcoeur-5d823.firebaseapp.com",databaseURL:"https://coeurcoeur-5d823-default-rtdb.europe-west1.firebasedatabase.app",projectId:"coeurcoeur-5d823",storageBucket:"coeurcoeur-5d823.firebasestorage.app",messagingSenderId:"685441792869",appId:"1:685441792869:web:21180b25ba30d39992ff8c"};
 const FIREBASE_SDK='10.12.2';
+// App Check (anti-abus) : clé de site reCAPTCHA v3 publique. Vide = désactivé.
+const APP_CHECK_SITE_KEY='';
 const APP_URL='https://filou337.github.io/carnet/';
 const SYNC_KEY='adeux-sync-v1';
 const CODE_ALPHA='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -1150,6 +1152,9 @@ function loadCloud(){
   const base=`https://www.gstatic.com/firebasejs/${FIREBASE_SDK}/`;
   const [A,U,D]=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-database.js')]);
   const app=A.getApps().length?A.getApp():A.initializeApp(FIREBASE_CONFIG);
+  if(APP_CHECK_SITE_KEY&&!window.__ADEUX_EMULATOR__&&!window.__adeuxAppCheck){
+   try{const C=await import(base+'firebase-app-check.js');window.__adeuxAppCheck=C.initializeAppCheck(app,{provider:new C.ReCaptchaV3Provider(APP_CHECK_SITE_KEY),isTokenAutoRefreshEnabled:true})}catch(e){console.warn('App Check',e)}
+  }
   const auth=U.getAuth(app),db=D.getDatabase(app);
   if(window.__ADEUX_EMULATOR__){U.connectAuthEmulator(auth,'http://127.0.0.1:9099',{disableWarnings:true});D.connectDatabaseEmulator(db,'127.0.0.1',9000)}
   auth.languageCode='fr';
