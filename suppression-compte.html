@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#f9f6f2" />
+<title>Supprimer mon compte · à deux.</title>
+<meta name="description" content="Supprimer votre compte « à deux. » et toutes vos données, directement depuis cette page." />
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+<style>
+:root{--bg:#f8f6f2;--paper:#fffdfa;--ink:#302a29;--muted:#7d7572;--line:#eee8e2;--brand:#bd7368;--brand-strong:#96564f;--brand-pale:#f5e8e2;--sage-pale:#edf2e9;--danger:#a3423a;--danger-pale:#fbecea}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:var(--brand-strong);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #5747a5;outline-offset:3px}
+.wrap{max-width:780px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:40px}
+.brand{display:flex;align-items:center;gap:10px;font:700 24px/1 Georgia,serif;letter-spacing:-.03em;color:var(--ink);text-decoration:none}
+.brand .mark{width:36px;height:36px;border-radius:12px;background:var(--brand);display:grid;place-items:center}
+.brand b{color:var(--brand)}
+.back{font-size:14px;font-weight:650;text-decoration:none;border:1px solid var(--line);background:var(--paper);padding:8px 14px;border-radius:12px;white-space:nowrap}
+.kicker{font-size:11px;font-weight:750;letter-spacing:.18em;text-transform:uppercase;color:var(--brand)}
+h1{font:400 clamp(34px,7vw,50px)/1.08 Georgia,serif;letter-spacing:-.03em;margin:10px 0 14px}
+h1 em{color:var(--brand)}
+.lead{color:#4a4341;margin:0 0 30px}
+h2{font:400 25px/1.25 Georgia,serif;letter-spacing:-.02em;margin:44px 0 12px}
+p,li{color:#4a4341}
+ul,ol{padding-left:22px}
+li{margin:6px 0}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 16px 46px rgba(69,43,29,.05)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid .card h3{margin:0 0 6px;font-size:16px}
+.grid .card ul{margin:0;padding-left:20px;font-size:15px}
+.del h3{color:var(--danger)}
+.keep h3{color:#4d7056}
+.field{margin:0 0 16px}
+label{display:block;font-size:13px;font-weight:700;margin:0 0 6px}
+input[type=email],input[type=password]{width:100%;font:inherit;padding:13px 15px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
+input[type=email]:focus,input[type=password]:focus{border-color:var(--brand)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;font-weight:500;color:#4a4341;margin:6px 0 20px;cursor:pointer}
+.check input{margin-top:4px;flex-shrink:0;accent-color:var(--danger)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:15px;padding:15px 20px;font:700 15px/1 inherit;font-family:inherit;color:#fff;background:var(--danger);cursor:pointer}
+.btn:disabled{opacity:.55;cursor:wait}
+.msg{border-radius:14px;padding:12px 16px;font-size:14px;margin:0 0 16px}
+.msg.err{background:var(--danger-pale);color:var(--danger)}
+.msg.ok{background:var(--sage-pale);color:#3f5f46}
+.done{text-align:center;padding:34px 24px}
+.done .big{font:400 30px/1.2 Georgia,serif;margin:0 0 10px}
+.small{font-size:14px;color:var(--muted)}
+.todo{background:#fff3c4;color:#6b5100;border-radius:6px;padding:1px 7px;font-weight:650}
+footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+@media (max-width:600px){.grid{grid-template-columns:1fr}.card{padding:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><span class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.7a5.6 5.6 0 0 0-7.9 0l-.9.9-.9-.9a5.6 5.6 0 1 0-7.9 7.9l.9.9L12 21l7.9-7.5.9-.9a5.6 5.6 0 0 0 0-7.9Z"/></svg></span><span>à deux<b>.</b></span></a>
+    <a class="back" href="./">← Retour à l’appli</a>
+  </header>
+
+  <div class="kicker">Appli « à deux. » · éditée par Philippe R.</div>
+  <h1>Supprimer mon <em>compte.</em></h1>
+  <p class="lead">Sur cette page, vous pouvez supprimer votre compte « à deux. » et vos données, sans avoir besoin d’ouvrir ou d’installer l’appli.</p>
+
+  <h2>Ce qui sera supprimé, ce qui restera</h2>
+  <div class="grid">
+    <section class="card del">
+      <h3>Supprimé immédiatement</h3>
+      <ul>
+        <li>Votre compte (adresse e-mail et mot de passe)</li>
+        <li>Votre clé personnelle chiffrée et votre code de secours</li>
+        <li>Votre place dans l’espace partagé</li>
+        <li>Si vous étiez seul(e) dans l’espace : <strong>tout le contenu de l’espace</strong></li>
+      </ul>
+    </section>
+    <section class="card keep">
+      <h3>Ce qui reste</h3>
+      <ul>
+        <li>Si votre moitié est encore dans l’espace, le contenu partagé reste disponible pour elle (il lui appartient aussi).</li>
+        <li>Les copies enregistrées sur vos appareils, jusqu’à la déconnexion ou l’effacement des données du navigateur.</li>
+        <li>Les journaux techniques de nos prestataires (Google, GitHub), effacés selon leurs propres durées, généralement quelques semaines.</li>
+      </ul>
+    </section>
+  </div>
+  <p class="small">Avant de supprimer, vous pouvez garder une copie de vos données : dans l’appli, Paramètres → Nos données → « Exporter en JSON ». La suppression est <strong>définitive</strong> : nous ne pourrons pas récupérer vos données ensuite.</p>
+
+  <h2>Supprimer maintenant</h2>
+  <section class="card" id="zone">
+    <form id="delForm" novalidate>
+      <div id="msg" role="status" aria-live="polite"></div>
+      <div class="field"><label for="email">Adresse e-mail du compte</label><input id="email" type="email" autocomplete="email" inputmode="email" required placeholder="toi@exemple.fr"></div>
+      <div class="field"><label for="pw">Mot de passe</label><input id="pw" type="password" autocomplete="current-password" required placeholder="Ton mot de passe"></div>
+      <label class="check"><input id="sure" type="checkbox"> <span>Je comprends que la suppression est définitive et que mes données ne pourront pas être récupérées.</span></label>
+      <button class="btn" id="go" type="submit">Supprimer définitivement mon compte</button>
+    </form>
+  </section>
+  <p class="small">Mot de passe oublié ? Ouvrez <a href="./">l’appli</a>, touchez « Mot de passe oublié ? » pour recevoir un e-mail de réinitialisation, puis revenez sur cette page avec le nouveau mot de passe.</p>
+
+  <h2>Autres façons de supprimer</h2>
+  <ul>
+    <li><strong>Depuis l’appli</strong> : Paramètres → Mon compte → « Supprimer mon compte ».</li>
+    <li><strong>Par e-mail</strong>, si vous n’arrivez plus à vous connecter : écrivez à <span class="todo">adresse de contact à venir</span> depuis l’adresse de votre compte. Nous supprimons le compte sous 30 jours au plus tard et vous le confirmons.</li>
+  </ul>
+  <p class="small">Plus de détails dans notre <a href="confidentialite.html">politique de confidentialité</a>.</p>
+
+  <footer><p>« à deux. » · Construire ensemble, avec ce que nous avons. · <a href="./">Retour à l’appli</a></p></footer>
+</div>
+
+<script type="module">
+const FIREBASE_SDK='10.12.2';
+const FIREBASE_CONFIG={apiKey:"AIzaSyCiS4-cyRRqoFUvZ8a1rcbsC0n7PeatrQw",authDomain:"coeurcoeur-5d823.firebaseapp.com",databaseURL:"https://coeurcoeur-5d823-default-rtdb.europe-west1.firebasedatabase.app",projectId:"coeurcoeur-5d823",storageBucket:"coeurcoeur-5d823.firebasestorage.app",messagingSenderId:"685441792869",appId:"1:685441792869:web:21180b25ba30d39992ff8c"};
+const APP_CHECK_SITE_KEY='6Lf0mBAuAAAAAJP4TDKTk1esIbaWuGhm4oNbyBOT';
+const $=id=>document.getElementById(id);
+let cloud=null;
+async function loadCloud(){
+  if(cloud)return cloud;
+  const base=`https://www.gstatic.com/firebasejs/${FIREBASE_SDK}/`;
+  const [A,U,D]=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-database.js')]);
+  const app=A.initializeApp(FIREBASE_CONFIG,'suppression');
+  if(APP_CHECK_SITE_KEY&&!window.__ADEUX_EMULATOR__){try{const C=await import(base+'firebase-app-check.js');C.initializeAppCheck(app,{provider:new C.ReCaptchaEnterpriseProvider(APP_CHECK_SITE_KEY),isTokenAutoRefreshEnabled:true})}catch(e){console.warn('App Check',e)}}
+  const auth=U.getAuth(app),db=D.getDatabase(app);auth.languageCode='fr';
+  if(window.__ADEUX_EMULATOR__){U.connectAuthEmulator(auth,'http://127.0.0.1:9099',{disableWarnings:true});D.connectDatabaseEmulator(db,'127.0.0.1',9000)}
+  await U.setPersistence(auth,U.inMemoryPersistence); // rien n'est gardé sur cet appareil
+  return cloud={U,D,auth,db};
+}
+function show(kind,text){$('msg').innerHTML=text?`<p class="msg ${kind}">${text}</p>`:''}
+function errText(e){
+  const c=(e&&e.code)||'';
+  if(/invalid-credential|wrong-password|user-not-found|invalid-login|invalid-email/.test(c))return 'E-mail ou mot de passe incorrect.';
+  if(/too-many-requests/.test(c))return 'Trop de tentatives. Réessaie dans quelques minutes.';
+  if(/network/.test(c))return 'Pas de connexion Internet. Vérifie ta connexion et réessaie.';
+  return 'La suppression n’a pas pu aboutir. Réessaie, ou écris-nous si le problème continue.';
+}
+$('delForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const email=$('email').value.trim(),pw=$('pw').value;
+  if(!email||!pw)return show('err','Indique ton e-mail et ton mot de passe.');
+  if(!$('sure').checked)return show('err','Coche la case pour confirmer que tu comprends que c’est définitif.');
+  $('go').disabled=true;$('go').textContent='Suppression en cours…';show('','');
+  try{
+    const {U,D,auth,db}=await loadCloud();
+    const cred=await U.signInWithEmailAndPassword(auth,email,pw);const uid=cred.user.uid;
+    const userRef=D.ref(db,'users/'+uid);
+    let prof=null;try{prof=(await D.get(userRef)).val()}catch(err){}
+    const room=prof&&prof.sp&&typeof prof.sp.room==='string'&&/^[0-9a-f]{32}$/.test(prof.sp.room)?prof.sp.room:null;
+    if(room){
+      const base='spaces/'+room;
+      try{
+        const m=(await D.get(D.ref(db,base+'/members'))).val()||{};
+        const mine=['p1','p2'].find(s=>m[s]&&m[s].uid===uid),other=['p1','p2'].find(s=>s!==mine&&m[s]);
+        if(mine&&!other)await D.remove(D.ref(db,base));           // dernier membre : tout l'espace est effacé
+        else if(mine)await D.remove(D.ref(db,base+'/members/'+mine)); // l'autre garde le contenu partagé
+      }catch(err){console.warn('Espace',err)}
+    }
+    if(prof)await D.remove(userRef);
+    await U.deleteUser(cred.user);
+    $('zone').innerHTML='<div class="done"><p class="big">Ton compte a été supprimé.</p><p>Tes données ont été effacées de nos serveurs. Sur tes appareils, l’appli te proposera de te reconnecter : tu peux simplement la désinstaller.</p><p class="small">Merci d’avoir écrit un bout de ton histoire avec « à deux. » ♡</p></div>';
+  }catch(err){
+    console.warn('Suppression',err);show('err',errText(err));
+    $('go').disabled=false;$('go').textContent='Supprimer définitivement mon compte';
+  }finally{const f=$('pw');if(f)f.value=''}
+});
+</script>
+</body>
+</html>
