@@ -833,7 +833,7 @@ function updateCarnetProgress(part){
 // Configuration du projet Firebase (valeurs publiques, à copier depuis la console Firebase).
 const FIREBASE_CONFIG={apiKey:"AIzaSyCiS4-cyRRqoFUvZ8a1rcbsC0n7PeatrQw",authDomain:"coeurcoeur-5d823.firebaseapp.com",databaseURL:"https://coeurcoeur-5d823-default-rtdb.europe-west1.firebasedatabase.app",projectId:"coeurcoeur-5d823",storageBucket:"coeurcoeur-5d823.firebasestorage.app",messagingSenderId:"685441792869",appId:"1:685441792869:web:21180b25ba30d39992ff8c"};
 const FIREBASE_SDK='10.12.2';
-// App Check (anti-abus) : clé de site reCAPTCHA v3 publique. Vide = désactivé.
+// App Check (anti-abus) : clé de site reCAPTCHA Enterprise (Fraud Defense), publique. Vide = désactivé.
 const APP_CHECK_SITE_KEY='6Lf0mBAuAAAAAJP4TDKTk1esIbaWuGhm4oNbyBOT';
 const APP_URL='https://filou337.github.io/carnet/';
 const SYNC_KEY='adeux-sync-v1';
@@ -1159,7 +1159,7 @@ function loadCloud(){
   const [A,U,D]=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-database.js')]);
   const app=A.getApps().length?A.getApp():A.initializeApp(FIREBASE_CONFIG);
   if(APP_CHECK_SITE_KEY&&!window.__ADEUX_EMULATOR__&&!window.__adeuxAppCheck){
-   try{const C=await import(base+'firebase-app-check.js');window.__adeuxAppCheck=C.initializeAppCheck(app,{provider:new C.ReCaptchaV3Provider(APP_CHECK_SITE_KEY),isTokenAutoRefreshEnabled:true})}catch(e){console.warn('App Check',e)}
+   try{const C=await import(base+'firebase-app-check.js');window.__adeuxAppCheck=C.initializeAppCheck(app,{provider:new C.ReCaptchaEnterpriseProvider(APP_CHECK_SITE_KEY),isTokenAutoRefreshEnabled:true})}catch(e){console.warn('App Check',e)}
   }
   const auth=U.getAuth(app),db=D.getDatabase(app);
   if(window.__ADEUX_EMULATOR__){U.connectAuthEmulator(auth,'http://127.0.0.1:9099',{disableWarnings:true});D.connectDatabaseEmulator(db,'127.0.0.1',9000)}
