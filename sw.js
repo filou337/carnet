@@ -1,8 +1,10 @@
 // « à deux. » : service worker (fonctionnement hors ligne)
 // - la page : réseau d'abord (toujours la dernière version), sinon la copie en cache ;
 // - les bibliothèques versionnées (Firebase, QR code) : cache d'abord, elles ne changent jamais ;
+// - la Bible (gros fichier qui ne change pas) : gardée dans son propre cache, conservé entre les versions ;
 // - tout le reste (base Firebase, connexion…) passe sans être touché.
-const VERSION = 'adeux-v3';
+const VERSION = 'adeux-v4';
+const BIBLE_CACHE = 'adeux-bible-lsg-1910';
 const SHELL = ['./', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png'];
 const LIBS = [/^https:\/\/www\.gstatic\.com\/firebasejs\/\d+\.\d+\.\d+\//, /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/qrcode-generator\//];
 
@@ -11,7 +13,7 @@ self.addEventListener('install', e => {
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
-    .then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k))))
+    .then(keys => Promise.all(keys.filter(k => k !== VERSION && k !== BIBLE_CACHE).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 self.addEventListener('fetch', e => {
@@ -30,6 +32,17 @@ self.addEventListener('fetch', e => {
       } catch (err) {
         return (await cache.match('./')) || Response.error();
       }
+    })());
+    return;
+  }
+  if (url.origin === location.origin && url.pathname.endsWith('/bible-lsg-1910.json')) {
+    e.respondWith((async () => {
+      const cache = await caches.open(BIBLE_CACHE);
+      const hit = await cache.match(req, { ignoreSearch: true });
+      if (hit) return hit;
+      const res = await fetch(req);
+      if (res.ok) cache.put(req, res.clone());
+      return res;
     })());
     return;
   }
