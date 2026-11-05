@@ -2,7 +2,7 @@
 // - la page : réseau d'abord (toujours la dernière version), sinon la copie en cache ;
 // - les bibliothèques versionnées (Firebase, QR code) : cache d'abord, elles ne changent jamais ;
 // - tout le reste (base Firebase, connexion…) passe sans être touché.
-const VERSION = 'adeux-v2';
+const VERSION = 'adeux-v3';
 const SHELL = ['./', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png'];
 const LIBS = [/^https:\/\/www\.gstatic\.com\/firebasejs\/\d+\.\d+\.\d+\//, /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/qrcode-generator\//];
 
