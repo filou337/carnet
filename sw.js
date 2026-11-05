@@ -3,7 +3,7 @@
 // - les bibliothèques versionnées (Firebase, QR code) : cache d'abord, elles ne changent jamais ;
 // - la Bible (gros fichier qui ne change pas) : gardée dans son propre cache, conservé entre les versions ;
 // - tout le reste (base Firebase, connexion…) passe sans être touché.
-const VERSION = 'adeux-v5';
+const VERSION = 'adeux-v6';
 const BIBLE_CACHE = 'adeux-bible-lsg-1910';
 const SHELL = ['./', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png'];
 const LIBS = [/^https:\/\/www\.gstatic\.com\/firebasejs\/\d+\.\d+\.\d+\//, /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/qrcode-generator\//];
