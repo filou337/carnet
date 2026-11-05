@@ -444,6 +444,18 @@
 .answers.q-anim .answer-wrap:nth-child(2) .q-revealed{animation-delay:.18s}
 @keyframes q-flip{from{opacity:0;transform:perspective(600px) rotateX(-70deg)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.answers.q-anim .q-revealed{animation:none}}
+.surprise-tag{display:block;margin-top:4px;font-size:10px;font-weight:700;color:#a26958}
+.surprise-amount{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:repeating-linear-gradient(135deg,#f8e9df 0 7px,#fbf1ea 7px 14px);color:#a26958;font-size:11px;font-weight:800}
+.surprise-cell{text-align:center}
+.surprise-field{border:1px dashed #e2c7b4;border-radius:14px;padding:12px 14px;margin:0 0 14px}
+.surprise-field legend{padding:0 6px;font-size:12px;font-weight:700}
+.check-line{display:flex!important;align-items:center;justify-content:flex-start!important;gap:10px;font-weight:500!important;cursor:pointer;text-align:left}
+.check-line input{width:18px!important;height:18px;min-height:0!important;flex:none;margin:0;padding:0}
+.check-line span{font-size:13px;color:var(--ink)}
+.surprise-opts{display:grid;gap:6px;margin-top:10px}
+.surprise-opts[hidden],.surprise-opts input[hidden]{display:none}
+.surprise-opts small{color:var(--muted);font-size:11px}
+.surprise-btn{font-size:14px}
 @media print{.co-card-tools,.co-chapter-tools,.co-add-theme{display:none!important}}
 @media print{.sidebar,.topbar,.backdrop,.toast,.co-nav,.co-btn,.co-done,.co-status,.co-next,.co-link{display:none!important}.main{margin-left:0!important}body{background:#fff}.content{padding:0}.co{border:0;padding:0}.co-card,.co-def,.co-planner,.co-opening-verse{break-inside:avoid}.co-grid{display:block}.co-card{margin-bottom:14px}}
 /* ─── Comptes : écran de connexion (d'après la maquette connexion_a_deux.html, aux couleurs du thème) ─── */
@@ -610,7 +622,7 @@ body.auth-open .app,body.auth-open #backdrop{display:none!important}
 <div class="field"><label for="expensePlanned">Montant prévu (€)</label><input id="expensePlanned" name="planned" type="number" step="0.01" min="0" max="1000000" placeholder="Ex : 25" inputmode="decimal" required></div>
 <div class="field"><label for="expenseActual">Dépense réelle (€) · Facultatif</label><input id="expenseActual" name="actual" type="number" step="0.01" min="0" max="1000000" placeholder="À compléter après la sortie" inputmode="decimal"></div>
 <div class="field"><label for="expensePayer">Qui a payé ?</label><select id="expensePayer" name="paidBy"><option value="both">À deux / compte commun</option><option id="payerP1" value="p1">Personne 1</option><option id="payerP2" value="p2">Personne 2</option></select></div>
-<div class="field"><label for="expenseNote">Petite note (facultative)</label><textarea id="expenseNote" name="note" maxlength="260" placeholder="Un bon souvenir, un lieu, une idée…"></textarea></div>
+<fieldset class="field surprise-field"><legend>🎁 C’est une surprise ?</legend><label class="check-line"><input type="checkbox" name="hide" id="expenseHide"> <span id="expenseHideLabel">Cacher les montants à ma moitié</span></label><div class="surprise-opts" id="expenseSurpriseOpts" hidden><label for="expenseReveal">Quand révéler le montant ?</label><select id="expenseReveal" name="rm"><option value="manual">Je le révélerai moi-même</option><option value="day">Le jour de la sortie</option><option value="at">À une date et une heure précises</option></select><input type="datetime-local" id="expenseRevealAt" name="ra" aria-label="Date et heure de la révélation" hidden><small id="expenseSurpriseHelp"></small></div></fieldset><div class="field"><label for="expenseNote">Petite note (facultative)</label><textarea id="expenseNote" name="note" maxlength="260" placeholder="Un bon souvenir, un lieu, une idée…"></textarea></div>
 <div class="dialog-actions"><button type="button" class="btn secondary" data-close="expenseDialog">Annuler</button><button type="submit" class="btn">Enregistrer la sortie</button></div></form></dialog>
 <dialog class="dialog" id="financeBudgetDialog" aria-labelledby="financeBudgetDialogTitle"><form class="dialog-inner" id="financeBudgetForm">
 <div class="dialog-header"><div><span class="eyebrow">Nos enveloppes de sorties</span><h2 id="financeBudgetDialogTitle">Budgets du mois</h2></div><button class="icon-btn" type="button" data-close="financeBudgetDialog" aria-label="Fermer">×</button></div>
@@ -922,7 +934,8 @@ function sanitizeFinance(raw){
  const entries=Array.isArray(obj.entries)?obj.entries.slice(0,1000).filter(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.title==='string'&&parseDate(x.date)&&['mini','big'].includes(x.type)).map(x=>({
    id:x.id.slice(0,120),title:x.title.slice(0,90),date:x.date,type:x.type,
    planned:safeMoney(x.planned)??0,actual:safeMoney(x.actual),
-   paidBy:['p1','p2','both'].includes(x.paidBy)?x.paidBy:'both',note:String(x.note||'').slice(0,260)
+   paidBy:['p1','p2','both'].includes(x.paidBy)?x.paidBy:'both',note:String(x.note||'').slice(0,260),
+   ...(x.hide===true?{hide:true,by:['p1','p2'].includes(x.by)?x.by:'',rm:['manual','day','at'].includes(x.rm)?x.rm:'manual',ra:typeof x.ra==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(x.ra)?x.ra:''}:{})
  })) : [];
  return {budgets,overrides,budgetChanges,entries};
 }
@@ -933,11 +946,27 @@ function budgetFor(month){
  for(let i=changes.length-1;i>=0;i--)if(changes[i].from<=month)return changes[i];
  return state.finance.budgets;
 }
+// Sorties « surprise » : les montants restent cachés à l’autre jusqu’à la révélation (manuelle, le jour de la sortie ou à une date choisie).
+const finMe=()=>sync?(sync.me==='p2'?'p2':'p1'):null;
+function revealTime(r){if(!r.hide)return null;const t=r.rm==='day'?new Date(r.date+'T00:00'):r.rm==='at'&&r.ra?new Date(r.ra):null;return t&&!isNaN(t)?t:null}
+function surpriseActive(r){if(!r.hide)return false;const t=revealTime(r);return !(t&&Date.now()>=t.getTime())}
+function amountHidden(r){if(!surpriseActive(r))return false;const me=finMe();return !me||!r.by||r.by!==me}
+const canReveal=r=>surpriseActive(r)&&(!finMe()||!r.by||r.by===finMe());
+function revealLabel(r){if(r.rm==='day')return 'révélée le jour de la sortie';const t=revealTime(r);return t?'révélée le '+new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(t):'révélation manuelle'}
+const surprisesText=n=>n?`+ ${n} surprise${n>1?'s':''} 🎁`:'';
+let finHiddenPrev=null;
+function surpriseCheck(){
+ const now=new Set(state.finance.entries.filter(amountHidden).map(r=>r.id));
+ if(finHiddenPrev){const opened=state.finance.entries.filter(r=>finHiddenPrev.has(r.id)&&!now.has(r.id));
+  if(opened.length){const r=opened[0];setTimeout(()=>{toast(`🎁 Surprise révélée : ${r.title} · ${euro(r.actual??r.planned)}`);if(typeof carnetBurst==='function')carnetBurst(innerWidth/2,innerHeight/2,22,240)},50)}}
+ const changed=!finHiddenPrev||finHiddenPrev.size!==now.size||[...now].some(i=>!finHiddenPrev.has(i));finHiddenPrev=now;return changed;
+}
+function surpriseChanged(){if(!finHiddenPrev)return false;const now=state.finance.entries.filter(amountHidden).map(r=>r.id);return now.length!==finHiddenPrev.size||now.some(i=>!finHiddenPrev.has(i))}
 function rowsFor(month,type='all'){
  return state.finance.entries.filter(x=>x.date.slice(0,7)===month&&(type==='all'||x.type===type));
 }
 function financeTotals(month,type='all'){
- const rows=rowsFor(month,type);
+ const all=rowsFor(month,type),rows=all.filter(r=>!amountHidden(r));
  const budgets=budgetFor(month);
  const budget=type==='mini'?budgets.mini:type==='big'?budgets.big:Math.round((budgets.mini+budgets.big)*100)/100;
  const actual=Math.round(rows.reduce((sum,r)=>sum+(r.actual??0),0)*100)/100;
@@ -945,7 +974,7 @@ function financeTotals(month,type='all'){
  const paidRows=rows.filter(r=>r.actual!==null),completed=paidRows.length;
  const settledPlanned=Math.round(paidRows.reduce((sum,r)=>sum+r.planned,0)*100)/100;
  const variance=Math.round((settledPlanned-actual)*100)/100;
- return {budget,actual,planned,settledPlanned,variance,completed,count:rows.length,remaining:Math.round((budget-actual)*100)/100};
+ return {budget,actual,planned,settledPlanned,variance,completed,count:all.length,surprises:all.length-rows.length,remaining:Math.round((budget-actual)*100)/100};
 }
 const monthDate=m=>new Date(Number(m.slice(0,4)),Number(m.slice(5,7))-1,1);
 const moveMonth=(m,step)=>{const d=monthDate(m);d.setMonth(d.getMonth()+step);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`};
@@ -984,7 +1013,7 @@ function financeChart(){
  ${stripes}${ticks}<path d="${area}" fill="url(#financeArea)"/><path d="${path('budget')}" fill="none" stroke="#83a087" stroke-width="2.3" stroke-dasharray="7 7" stroke-linejoin="round" stroke-linecap="round"/>
  <path d="${path('actual')}" fill="none" stroke="var(--brand)" stroke-width="3.6" stroke-linejoin="round" stroke-linecap="round"/>${pointsSvg}</svg></div>`;
 }
-function financeHomeTeaser(){const t=financeTotals(todayKey.slice(0,7));return `<section class="card finance-home-teaser"><div><span class="mini-label">✦ &nbsp; Nos petites escapades</span><strong>De beaux moments, un budget à deux.</strong><p>Ce mois-ci : ${esc(euro(t.actual))} dépensés sur ${esc(euro(t.budget))} de budget.</p></div><button class="btn secondary" data-go="depenses">Notre carnet de dépenses ${icons.arrow}</button></section>`}
+function financeHomeTeaser(){const t=financeTotals(todayKey.slice(0,7));return `<section class="card finance-home-teaser"><div><span class="mini-label">✦ &nbsp; Nos petites escapades</span><strong>De beaux moments, un budget à deux.</strong><p>Ce mois-ci : ${esc(euro(t.actual))} dépensés sur ${esc(euro(t.budget))} de budget${t.surprises?` (${esc(surprisesText(t.surprises))})`:''}.</p></div><button class="btn secondary" data-go="depenses">Notre carnet de dépenses ${icons.arrow}</button></section>`}
 function renderFinance(){
  const selected=expenseMonth,allRows=rowsFor(selected,expenseType).slice().sort((a,b)=>b.date.localeCompare(a.date));
  const monthly=financeTotals(selected,expenseType),budget=budgetFor(selected);
@@ -992,7 +1021,7 @@ function renderFinance(){
  const filters=[['all','Toutes les sorties'],['mini','♡ Mini dates'],['big','✦ Big dates']].map(([value,label])=>`<button class="filter ${expenseType===value?'active':''}" data-action="finance-filter" data-filter="${value}" aria-pressed="${expenseType===value}">${label}</button>`).join('');
  const summary=[
   {label:'Budget du mois',value:euro(monthly.budget),desc:'Enveloppe prévue pour '+scope,icon:'✧'},
-  {label:'Dépenses réelles',value:euro(monthly.actual),desc:'Montants renseignés ce mois-ci',icon:'↗'},
+  {label:'Dépenses réelles',value:euro(monthly.actual),desc:monthly.surprises?surprisesText(monthly.surprises)+' non comptée'+(monthly.surprises>1?'s':''):'Montants renseignés ce mois-ci',icon:'↗'},
   {label:monthly.remaining>=0?'Budget disponible':'Dépassement',value:euro(Math.abs(monthly.remaining)),desc:monthly.remaining>=0?'Pour nos prochaines aventures':'Au-delà de notre enveloppe',icon:'♡',cls:'highlight '+(monthly.remaining<0?'negative':'')},
   {label:'Dates enregistrées',value:monthly.count,desc:`${monthly.completed} avec dépense renseignée`,icon:'✦'}
  ];
@@ -1003,13 +1032,17 @@ function renderFinance(){
   return `<article class="card finance-envelope ${isBig?'big':'mini'}"><div class="finance-envelope-top"><div class="finance-type-icon">${isBig?'✦':'♡'}</div><div><h3>${isBig?'Big dates':'Mini dates'}</h3><div class="type-sub">${isBig?'Nos grands rendez-vous et aventures':'Les petites attentions du quotidien'}</div></div><button class="finance-edit-btn" type="button" data-action="edit-finance-budgets" data-budget-type="${type}" aria-label="Modifier le budget ${isBig?'Big dates':'Mini dates'}" title="Modifier le budget ${isBig?'Big dates':'Mini dates'}">${icons.edit}<span>Modifier</span></button></div>
   <div class="finance-money-pair"><div><div class="mini-label">Dépensé ce mois</div><strong>${esc(euro(t.actual))}</strong></div><small>sur ${esc(euro(t.budget))}</small></div>
   <div class="finance-meter" role="progressbar" aria-label="${isBig?'Big dates':'Mini dates'} : budget utilisé" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(fraction)}"><span style="width:${fraction.toFixed(1)}%"></span></div>
-  <div class="finance-meter-foot"><span>${t.count} date${t.count>1?'s':''} enregistrée${t.count>1?'s':''}</span><strong class="${t.remaining<0?'finance-negative':''}">${t.remaining>=0?`${esc(euro(t.remaining))} restant`:`${esc(euro(-t.remaining))} au-dessus`}</strong></div><p class="finance-card-help">Budget mensuel personnalisable · ${esc(readableMonth(selected,true))}</p></article>`
+  <div class="finance-meter-foot"><span>${t.count} date${t.count>1?'s':''} enregistrée${t.count>1?'s':''}${t.surprises?` · ${esc(surprisesText(t.surprises))}`:''}</span><strong class="${t.remaining<0?'finance-negative':''}">${t.remaining>=0?`${esc(euro(t.remaining))} restant`:`${esc(euro(-t.remaining))} au-dessus`}</strong></div><p class="finance-card-help">Budget mensuel personnalisable · ${esc(readableMonth(selected,true))}</p></article>`
  }).join('');
  const ledger=allRows.length?`<div class="finance-table-wrap"><table class="finance-table"><thead><tr><th>Sortie</th><th>Date</th><th>Type</th><th>Payé par</th><th class="num">Prévu</th><th class="num">Réel</th><th class="num">Écart</th><th><span class="visually-hidden">Actions</span></th></tr></thead><tbody>
  ${allRows.map(r=>{
  const diff=r.actual===null?null:Math.round((r.planned-r.actual)*100)/100;
  const paid=r.paidBy==='p1'?state.settings.p1:r.paidBy==='p2'?state.settings.p2:'À deux';
- return `<tr><td><span class="expense-title">${esc(r.title)}</span>${r.note?`<span class="expense-note">${esc(r.note)}</span>`:''}</td><td>${esc(fmtDate(r.date,{day:'numeric',month:'short'}))}</td><td><span class="finance-tag ${r.type}">${r.type==='mini'?'♡ Mini':'✦ Big'}</span></td><td>${esc(paid)}</td><td class="num">${esc(euro(r.planned))}</td><td class="num">${r.actual===null?'<span class="text-muted">À saisir</span>':esc(euro(r.actual))}</td><td class="num ${diff===null?'':diff>=0?'finance-positive':'finance-negative'}">${diff===null?'—':`${diff>0?'+':''}${esc(euro(diff))}`}</td><td><div class="fin-actions"><button class="icon-small" data-action="edit-expense" data-id="${esc(r.id)}" aria-label="Modifier ${esc(r.title)}" title="Modifier">${icons.edit}</button><button class="icon-small" data-action="delete-expense" data-id="${esc(r.id)}" aria-label="Supprimer ${esc(r.title)}" title="Supprimer">${icons.trash}</button></div></td></tr>`}).join('')}</tbody><tfoot><tr><td colspan="4">Total · ${esc(readableMonth(selected,true))}</td><td class="num">${esc(euro(monthly.planned))}</td><td class="num">${esc(euro(monthly.actual))}</td><td class="num ${monthly.variance>=0?'finance-positive':'finance-negative'}">${monthly.completed?`${monthly.variance>0?'+':''}${esc(euro(monthly.variance))}`:'—'}</td><td class="num">${esc(monthly.completed)} / ${esc(monthly.count)}</td></tr></tfoot></table></div>`
+ const hid=amountHidden(r),sur=surpriseActive(r),other=r.by?state.settings[r.by==='p1'?'p2':'p1']:'';
+ const tag=sur?`<span class="surprise-tag">🎁 ${hid?`Surprise${r.by?' de '+esc(state.settings[r.by]):''}`:`Cachée à ${esc(other||'l’autre')}`} · ${esc(revealLabel(r))}</span>`:'';
+ const money=hid?`<td class="num surprise-cell" colspan="3"><span class="surprise-amount">🎁 Surprise</span></td>`:null;
+ const revealBtn=canReveal(r)?`<button class="icon-small surprise-btn" data-action="reveal-expense" data-id="${esc(r.id)}" aria-label="Révéler le montant de ${esc(r.title)}" title="Révéler maintenant">🎁</button>`:'';
+ return `<tr${hid?' class="is-surprise"':''}><td><span class="expense-title">${esc(r.title)}</span>${tag}${r.note?`<span class="expense-note">${esc(r.note)}</span>`:''}</td><td>${esc(fmtDate(r.date,{day:'numeric',month:'short'}))}</td><td><span class="finance-tag ${r.type}">${r.type==='mini'?'♡ Mini':'✦ Big'}</span></td><td>${esc(paid)}</td>${money||`<td class="num">${esc(euro(r.planned))}</td><td class="num">${r.actual===null?'<span class="text-muted">À saisir</span>':esc(euro(r.actual))}</td><td class="num ${diff===null?'':diff>=0?'finance-positive':'finance-negative'}">${diff===null?'—':`${diff>0?'+':''}${esc(euro(diff))}`}</td>`}<td><div class="fin-actions">${revealBtn}${hid?'':`<button class="icon-small" data-action="edit-expense" data-id="${esc(r.id)}" aria-label="Modifier ${esc(r.title)}" title="Modifier">${icons.edit}</button>`}<button class="icon-small" data-action="delete-expense" data-id="${esc(r.id)}" aria-label="Supprimer ${esc(r.title)}" title="Supprimer">${icons.trash}</button></div></td></tr>`}).join('')}</tbody><tfoot><tr><td colspan="4">Total · ${esc(readableMonth(selected,true))}${monthly.surprises?` · ${esc(surprisesText(monthly.surprises))} non comptée${monthly.surprises>1?'s':''}`:''}</td><td class="num">${esc(euro(monthly.planned))}</td><td class="num">${esc(euro(monthly.actual))}</td><td class="num ${monthly.variance>=0?'finance-positive':'finance-negative'}">${monthly.completed?`${monthly.variance>0?'+':''}${esc(euro(monthly.variance))}`:'—'}</td><td class="num">${esc(monthly.completed)} / ${esc(monthly.count)}</td></tr></tfoot></table></div>`
  :`<div class="finance-empty"><div class="finance-empty-icon">♡</div><strong>Notre carnet attend son premier souvenir.</strong><p>Ajoutons une mini date ou une big date et notons notre budget prévu. Nous pourrons saisir le montant réellement dépensé plus tard.</p><button class="btn" data-action="add-expense">${icons.plus} Ajouter notre première sortie</button></div>`;
  return pageIntro('Finances & beaux moments','Nos sorties, notre équilibre.','Un petit bilan pour profiter de nos rendez-vous sans perdre le fil de nos dépenses.',`<button class="btn" data-action="add-expense">${icons.plus} Ajouter une sortie</button>`)+`
  <div class="finance-toolbar"><div class="filters" role="group" aria-label="Filtrer les types de dates">${filters}</div><label class="finance-month-picker">Mois analysé <input type="month" id="expenseMonth" aria-label="Mois du bilan" value="${esc(selected)}"></label></div>
@@ -1021,6 +1054,7 @@ function renderFinance(){
  <section class="card finance-ledger">${ledger}</section><div class="finance-ledger-note">✦ Les montants sont déclarés manuellement. Aucun compte bancaire n'est connecté ; toutes les données restent dans ce navigateur, avec sauvegarde JSON dans les paramètres.</div>`;
 }
 function openExpenseForm(entryId){
+ if(entryId){const r=state.finance.entries.find(x=>x.id===entryId);if(r&&amountHidden(r)){toast('🎁 C’est une surprise : le montant reste caché pour l’instant.');return}}
  const form=$('#expenseForm');form.reset();form.elements.editId.value='';
  const date=expenseMonth===todayKey.slice(0,7)?todayKey:expenseMonth+'-01';
  form.elements.date.value=date;
@@ -1032,10 +1066,19 @@ function openExpenseForm(entryId){
   form.elements.planned.value=r.planned;form.elements.actual.value=r.actual===null?'':r.actual;
   form.elements.paidBy.value=r.paidBy;form.elements.note.value=r.note;
   $('#expenseDialogTitle').textContent='Modifier cette sortie';
+  if(r.hide&&surpriseActive(r)){form.elements.hide.checked=true;form.elements.rm.value=r.rm||'manual';form.elements.ra.value=r.ra||''}
  }
+ expenseSurpriseUi();
  $('#payerP1').textContent=state.settings.p1;$('#payerP2').textContent=state.settings.p2;
  openDialog('expenseDialog');form.elements.title.focus();
 }
+function expenseSurpriseUi(){
+ const f=$('#expenseForm').elements,on=f.hide.checked,me=finMe(),other=me?state.settings[me==='p1'?'p2':'p1']:'';
+ $('#expenseHideLabel').textContent=me?`Cacher les montants à ${other}`:'Cacher les montants jusqu’à la révélation';
+ $('#expenseSurpriseOpts').hidden=!on;$('#expenseRevealAt').hidden=!(on&&f.rm.value==='at');$('#expenseRevealAt').required=on&&f.rm.value==='at';
+ $('#expenseSurpriseHelp').textContent=me?`${other} verra la sortie, mais pas son prix. Les totaux ne le compteront pas chez ${other} avant la révélation.`:'Sur ce téléphone partagé, le montant sera caché pour tout le monde jusqu’à la révélation.';
+}
+document.addEventListener('change',e=>{if(e.target.id==='expenseHide'||e.target.id==='expenseReveal')expenseSurpriseUi()});
 function openBudgetForm(type){
  const b=budgetFor(expenseMonth),form=$('#financeBudgetForm');
  form.elements.mini.value=b.mini;form.elements.big.value=b.big;
@@ -1051,7 +1094,7 @@ function csvCell(value){let v=String(value??'');if(typeof value==='string'&&/^[=
 function exportFinanceCSV(){
  const entries=rowsFor(expenseMonth,expenseType).sort((a,b)=>a.date.localeCompare(b.date));
  const header=['Date','Sortie','Type','Budget prévu (€)','Dépense réelle (€)','Écart (€)','Payé par','Note'];
- const lines=entries.map(r=>[r.date,r.title,r.type==='mini'?'Mini date':'Big date',r.planned,r.actual??'',r.actual===null?'':Math.round((r.planned-r.actual)*100)/100,r.paidBy==='p1'?state.settings.p1:r.paidBy==='p2'?state.settings.p2:'À deux',r.note]);
+ const lines=entries.map(r=>amountHidden(r)?[r.date,r.title,r.type==='mini'?'Mini date':'Big date','Surprise','Surprise','',r.paidBy==='p1'?state.settings.p1:r.paidBy==='p2'?state.settings.p2:'À deux',r.note]:[r.date,r.title,r.type==='mini'?'Mini date':'Big date',r.planned,r.actual??'',r.actual===null?'':Math.round((r.planned-r.actual)*100)/100,r.paidBy==='p1'?state.settings.p1:r.paidBy==='p2'?state.settings.p2:'À deux',r.note]);
  const csv='\uFEFF'+[header,...lines].map(row=>row.map(csvCell).join(';')).join('\r\n');
  const link=document.createElement('a'),url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
  link.href=url;link.download=`a-deux-bilan-${expenseMonth}-${expenseType}.csv`;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Bilan CSV exporté ♡');
@@ -1895,7 +1938,7 @@ state.myplans=sanitizeMyPlans(state.myplans);
 state.bible=sanitizeBible(state.bible);
 state.qflags=sanitizeQFlags(state.qflags);
 
-function render(){document.documentElement.dataset.theme=['rose','sage','lilas'].includes(state.settings.theme)?state.settings.theme:'rose';updateHeader();const html={accueil:renderHome,calendrier:renderCalendar,plans:renderPlans,bible:renderBible,projets:renderProjects,depenses:renderFinance,parametres:renderSettings};$('#pageContent').innerHTML=(html[page]||renderHome)();syncDecorate();if(page==='bible')bibleMount()}
+function render(){document.documentElement.dataset.theme=['rose','sage','lilas'].includes(state.settings.theme)?state.settings.theme:'rose';updateHeader();const html={accueil:renderHome,calendrier:renderCalendar,plans:renderPlans,bible:renderBible,projets:renderProjects,depenses:renderFinance,parametres:renderSettings};surpriseCheck();$('#pageContent').innerHTML=(html[page]||renderHome)();syncDecorate();if(page==='bible')bibleMount()}
 function go(dest){if(!['accueil','calendrier','plans','bible','projets','depenses','parametres'].includes(dest))dest='accueil';page=dest;history.replaceState(null,'','#'+dest);render();window.scrollTo({top:0,behavior:'instant'});setMobileOpen(false)}
 function setMobileOpen(open){$('#sidebar').classList.toggle('open',open);$('#backdrop').classList.toggle('show',open);$('#mobileMenu').setAttribute('aria-expanded',String(open));$('#mobileMenu').setAttribute('aria-label',open?'Fermer le menu':'Ouvrir le menu')}
 function openDialog(id){const d=document.getElementById(id);if(typeof d.showModal==='function')d.showModal();else d.setAttribute('open','');}
@@ -1923,6 +1966,7 @@ else if(a==='scroll-bucket')$('#bucket-list')?.scrollIntoView({behavior:'smooth'
 else if(a==='open-carnet'){const k=btn.dataset.key||'',p=k.split('-')[0];planView=isProgramPart(p)||myPlan(p)?p:'avant';go('plans');if(k)document.getElementById('carnet-'+k)?.scrollIntoView({block:'start'})}
 else if(a==='add-expense')openExpenseForm();
 else if(a==='edit-expense')openExpenseForm(x);
+else if(a==='reveal-expense'){const r=state.finance.entries.find(i=>i.id===x);if(r&&canReveal(r)&&confirm(`Révéler le montant de « ${r.title} » ?`)){delete r.hide;delete r.by;delete r.rm;delete r.ra;save();render()}}
 else if(a==='delete-expense'){if(confirm('Supprimer cette dépense du bilan ?')){state.finance.entries=state.finance.entries.filter(r=>r.id!==x);save();render();toast('Sortie retirée du carnet.')}}
 else if(a==='finance-filter'){if(['all','mini','big'].includes(btn.dataset.filter)){expenseType=btn.dataset.filter;render()}}
 else if(a==='finance-range'){if(['6','12','all'].includes(btn.dataset.range)){expenseRange=btn.dataset.range;render()}}
@@ -1950,9 +1994,12 @@ $('#expenseForm').addEventListener('submit',e=>{
   toast('Vérifions la date et les montants saisis.');return;
  }
  const entry={id:f.editId.value||id(),title:title.slice(0,90),date,type,planned,actual,paidBy:f.paidBy.value,note:f.note.value.trim().slice(0,260)};
+ if(f.hide.checked){const rm=['manual','day','at'].includes(f.rm.value)?f.rm.value:'manual',ra=f.ra.value;
+  if(rm==='at'&&!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(ra)){toast('Choisissons la date et l’heure de la révélation.');return}
+  const prev=state.finance.entries.find(r=>r.id===entry.id);Object.assign(entry,{hide:true,by:prev&&prev.hide&&prev.by?prev.by:(finMe()||''),rm,ra:rm==='at'?ra:''})}
  if(f.editId.value)state.finance.entries=state.finance.entries.map(r=>r.id===entry.id?entry:r);
  else state.finance.entries.unshift(entry);
- expenseMonth=date.slice(0,7);save();closeDialog('expenseDialog');render();toast('Notre sortie est enregistrée ♡');
+ expenseMonth=date.slice(0,7);save();closeDialog('expenseDialog');render();toast(entry.hide&&surpriseActive(entry)?'🎁 Surprise enregistrée : le montant reste caché ♡':'Notre sortie est enregistrée ♡');
 });
 $('#financeBudgetForm').addEventListener('submit',e=>{
  e.preventDefault();const f=e.currentTarget.elements,mini=safeMoney(f.mini.value),big=safeMoney(f.big.value);
@@ -2001,6 +2048,8 @@ if(loadBroken&&sync&&sync.items&&Object.keys(sync.items).length){try{state=state
 if(AUTH_ON){if(account)startSession();else showAuth('login')}else if(sync)syncStart();
 window.addEventListener('online',()=>{if(AUTH_ON&&account&&!syncRt.backend)startSession()});
 setInterval(()=>{if(sync)syncDecorate()},3000);
+// Révélation programmée : on vérifie chaque minute si une surprise doit s’ouvrir.
+setInterval(()=>{if(state.finance.entries.some(r=>r.hide)&&!document.querySelector('dialog[open]')&&!isEditing()&&surpriseChanged())render()},30000);
 })();
 </script>
 </body>
