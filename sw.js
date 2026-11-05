@@ -5,7 +5,7 @@
 // - les rappels (notifications sans serveur) : la page prépare la liste, le service worker la relit
 //   quand Android le réveille (Periodic Background Sync) et affiche ceux qui sont arrivés ;
 // - tout le reste (base Firebase, connexion…) passe sans être touché.
-const VERSION = 'adeux-v9';
+const VERSION = 'adeux-v10';
 const BIBLE_CACHE = 'adeux-bible-lsg-1910';
 const NOTIF_CACHE = 'adeux-notif';
 const SHELL = ['./', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png'];
