@@ -649,6 +649,11 @@ body.auth-open .app,body.auth-open #backdrop{display:none!important}
 @media(max-width:1100px){.foi-grid,.foi-themes{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:670px){.foi-grid,.foi-themes{grid-template-columns:1fr}.foi-py-form{grid-template-columns:1fr}.foi-head{flex-direction:column;align-items:flex-start;gap:10px;padding:22px}.foi-q{flex-direction:column;gap:4px}.foi-text{padding:16px;font-size:16px}.foi-py{flex-direction:column;align-items:flex-start}.foi-link{flex-direction:column;align-items:flex-start}.foi-tabs{display:flex}.foi-tabs button{flex:1}}
 :root[data-scheme="dark"] .foi-q-label,:root[data-scheme="dark"] .foi-v sup,:root[data-scheme="dark"] .foi-prayed,:root[data-scheme="dark"] .foi-py.ans p{color:#9fb8a2}:root[data-scheme="dark"] .foi-today{background:linear-gradient(120deg,#33231f,#222c25)}
+.br-v.in-note{text-decoration:underline solid 2px #ac784966;text-underline-offset:5px}.br-v.range-start{outline:2px dashed #ac7849;outline-offset:2px;border-radius:4px}
+.br-tool.br-range.on{background:var(--brand-pale);color:var(--brand-strong);border-color:var(--brand)}.br-range-hint{flex-basis:100%;font-size:11.5px;font-weight:700;color:var(--brand-strong)}
+.br-note-ref{font-weight:600;font-size:11px;color:var(--muted);margin-left:7px}
+.br-note-passage{display:block;max-height:7.6em;overflow:hidden;position:relative;font:italic 14px/1.6 Georgia,serif;color:var(--muted);background:var(--bg);border-radius:10px;padding:8px 12px;margin:6px 0 4px}.br-note-passage:not(.open):after{content:"";position:absolute;left:0;right:0;bottom:0;height:2.2em;background:linear-gradient(transparent,var(--bg))}.br-note-passage.open{max-height:none}.br-note-passage sup{font:700 9px system-ui,sans-serif;color:#78917c;margin-right:2px}.br-pv-toggle{padding:2px 0 8px;font-size:11.5px}
+:root[data-scheme="dark"] .br-v.in-note{text-decoration-color:#d0a27370}:root[data-scheme="dark"] .br-v.range-start{outline-color:#d0a273}:root[data-scheme="dark"] .br-note-passage sup{color:#9fb8a2}
 </style>
 </head>
 <body>
@@ -859,7 +864,7 @@ const BIBLE_URL='bible-lsg-1910.json',BIBLE_POS='adeux-bible-pos';
 const bibleBooks=[['Genèse','gn,gen'],['Exode','ex,exo'],['Lévitique','lv,lev'],['Nombres','nb,nom'],['Deutéronome','dt,deut'],['Josué','jos'],['Juges','jg,jug'],['Ruth','rt,ru'],['1 Samuel','1s,1sa,1sam'],['2 Samuel','2s,2sa,2sam'],['1 Rois','1r,1ro'],['2 Rois','2r,2ro'],['1 Chroniques','1ch,1chr'],['2 Chroniques','2ch,2chr'],['Esdras','esd'],['Néhémie','ne,neh'],['Esther','est'],['Job','jb'],['Psaumes','ps,psa'],['Proverbes','pr,prov'],['Ecclésiaste','ec,ecc,qo'],['Cantique des cantiques','ct,cant'],['Ésaïe','es,esa,is'],['Jérémie','jr,jer'],['Lamentations','lm,lam'],['Ézéchiel','ez,eze'],['Daniel','dn,dan'],['Osée','os'],['Joël','jl,joe'],['Amos','am'],['Abdias','ab,abd'],['Jonas','jon'],['Michée','mi,mic'],['Nahum','na,nah'],['Habacuc','ha,hab'],['Sophonie','so,soph'],['Aggée','ag,agg'],['Zacharie','za,zac'],['Malachie','ml,mal'],['Matthieu','mt,mat'],['Marc','mc,mr'],['Luc','lc,lu'],['Jean','jn'],['Actes','ac,act'],['Romains','rm,ro,rom'],['1 Corinthiens','1co,1cor'],['2 Corinthiens','2co,2cor'],['Galates','ga,gal'],['Éphésiens','ep,eph'],['Philippiens','ph,phil'],['Colossiens','col'],['1 Thessaloniciens','1th,1thes'],['2 Thessaloniciens','2th,2thes'],['1 Timothée','1tm,1ti,1tim'],['2 Timothée','2tm,2ti,2tim'],['Tite','tt,tit'],['Philémon','phm'],['Hébreux','he,heb'],['Jacques','jc,jac'],['1 Pierre','1p,1pi'],['2 Pierre','2p,2pi'],['1 Jean','1jn'],['2 Jean','2jn'],['3 Jean','3jn'],['Jude','jd'],['Apocalypse','ap,apo']];
 const bnorm=s=>String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[’']/g,"'");
 const bibleKeys=bibleBooks.map(([n,a])=>({full:bnorm(n).replace(/\s+/g,''),abbr:a.split(',')}));
-const bibleRt={data:null,loading:null,error:false,norm:null,b:42,c:2,hl:null,hits:null,query:'',sel:new Set(),open:new Set(),editing:null,draft:'',pf:'all',jump:null};
+const bibleRt={data:null,loading:null,error:false,norm:null,b:42,c:2,hl:null,hits:null,query:'',sel:new Set(),open:new Set(),editing:null,draft:'',pf:'all',jump:null,range:false,rangeStart:null,lastV:null,pv:false,noteVs:new Set()};
 try{const p=JSON.parse(localStorage.getItem(BIBLE_POS)||'null');if(p&&Number.isInteger(p.b)&&p.b>=0&&p.b<66&&Number.isInteger(p.c)&&p.c>=0){bibleRt.b=p.b;bibleRt.c=p.c}}catch(e){}
 function loadBible(){
  if(bibleRt.data)return Promise.resolve(bibleRt.data);
@@ -905,7 +910,7 @@ function bibleMount(){
   box.innerHTML=`<div class="br-hits-head"><strong>${h.length?h.length>=150?'Plus de 150 versets':h.length+' verset'+(h.length>1?'s':''):'Aucun verset'} pour « ${esc(bibleRt.query)} »</strong><button type="button" class="text-link" data-action="bible-close-search">Revenir à la lecture</button></div>`+(h.length?`<ol class="br-hits">${h.map(([b,c,v])=>`<li><button type="button" data-action="bible-go" data-b="${b}" data-c="${c}" data-v="${v}"><b>${esc(bibleRefLabel(b,c,v))}</b><span>${esc(d.b[b][c][v-1])}</span></button></li>`).join('')}</ol>`:'<p class="br-status">Essayons un autre mot, ou une référence comme « Romains 8:28 ».</p>');
   return;
  }
- const ch=bk[bibleRt.c];
+ const ch=bk[bibleRt.c];bibleRt.noteVs=bibleNoteVerses();
  box.innerHTML=`<h3 class="br-title">${esc(bibleBooks[bibleRt.b][0])} <span>${bibleRt.c+1}</span></h3><p class="br-hint">Touchons un ou plusieurs versets pour les surligner ou y ajouter une note.</p><div class="br-verses">${ch.map((t,i)=>bibleVerseHtml(bibleRt.b,bibleRt.c,i+1,t)).join('')}</div>${bibleToolsHtml()}<p class="br-foot">Louis Segond 1910 · domaine public · texte eBible.org</p><div class="br-pager">${bibleRt.b||bibleRt.c?`<button type="button" class="btn secondary" data-action="bible-step" data-dir="-1">‹ ${esc(bibleStepLabel(-1))}</button>`:'<span></span>'}${bibleRt.b<65||bibleRt.c<bk.length-1?`<button type="button" class="btn secondary" data-action="bible-step" data-dir="1">${esc(bibleStepLabel(1))} ›</button>`:''}</div>`;
  if(bibleRt.jump){document.getElementById('bv-'+bibleRt.jump)?.scrollIntoView({block:'center'});bibleRt.jump=null}
 }
@@ -943,7 +948,7 @@ const whoColor={p1:'#CE6A6B',p2:'#4A919E'};
 function sanitizeBible(raw){
  const o=raw&&typeof raw==='object'?raw:{},hl={},notes={};
  if(o.hl&&typeof o.hl==='object')for(const [k,v] of Object.entries(o.hl).slice(0,8000))if(bibleKeyOk(k)&&bibleColorOk(v))hl[k]=v;
- if(o.notes&&typeof o.notes==='object')for(const [k,v] of Object.entries(o.notes).slice(0,3000)){if(!bibleKeyOk(k)||!v||typeof v!=='object')continue;const n={};for(const w of ['p1','p2'])if(typeof v[w]==='string'&&v[w].trim())n[w]=v[w].slice(0,2000);if(n.p1||n.p2)notes[k]=n}
+ if(o.notes&&typeof o.notes==='object')for(const [k,v] of Object.entries(o.notes).slice(0,3000)){if(!bibleKeyOk(k)||!v||typeof v!=='object')continue;const n={};for(const w of ['p1','p2'])if(typeof v[w]==='string'&&v[w].trim()){n[w]=v[w].slice(0,2000);if(typeof v['r'+w]==='string'){const r=vsCompress(vsParse(v['r'+w]));if(r&&r.length<=200)n['r'+w]=r}}if(n.p1||n.p2)notes[k]=n}
  return {hl,notes};
 }
 const bibleMe=()=>sync&&sync.me==='p2'?'p2':'p1';
@@ -951,27 +956,38 @@ const whoName=w=>state.settings[w]||(w==='p1'?'Personne 1':'Personne 2');
 const bkey=(b,c,v)=>`${b}-${c}-${v}`;
 const bkeySplit=k=>k.split('-').map(Number);
 // « Jean 3:16-17, 19 »
+// Passages de plusieurs versets (« 4-8,14-15 ») pour les notes.
+const vsCompress=list=>{const vs=[...new Set(list)].filter(Number.isInteger).sort((a,b)=>a-b),parts=[];for(let i=0;i<vs.length;){let j=i;while(j+1<vs.length&&vs[j+1]===vs[j]+1)j++;parts.push(i===j?String(vs[i]):`${vs[i]}-${vs[j]}`);i=j+1}return parts.join(',')};
+const vsParse=str=>{const out=[];for(const part of String(str||'').split(',')){const m=/^(\d{1,3})(?:-(\d{1,3}))?$/.exec(part.trim());if(!m)continue;const a=+m[1],b=m[2]?+m[2]:a;if(a<1||b<a||b-a>200)continue;for(let v=a;v<=b;v++)out.push(v)}return [...new Set(out)].sort((x,y)=>x-y)};
+const vsPretty=r=>String(r).split(',').join(', ');
+const noteRange=(n,w,v)=>{const r=n&&n['r'+w];return r&&vsParse(r).length?r:String(v)};
+const noteRefLabel=(b,c,r)=>`${bibleBooks[b][0]} ${c+1}:${vsPretty(r)}`;
+function bibleNoteVerses(){const set=new Set(),B=state.bible,keys=new Set(bibleRt.open);if(bibleRt.editing)keys.add(bibleRt.editing.k);
+ for(const k of keys){const [b,c,v]=bkeySplit(k);if(b!==bibleRt.b||c!==bibleRt.c)continue;const n=B.notes[k]||{};for(const w of ['p1','p2'])if(n[w])vsParse(noteRange(n,w,v)).forEach(x=>set.add(x));if(bibleRt.editing&&bibleRt.editing.k===k)vsParse(bibleRt.editing.r).forEach(x=>set.add(x))}
+ return set}
 function bibleSelLabel(){const vs=[...bibleRt.sel].sort((a,b)=>a-b),parts=[];for(let i=0;i<vs.length;){let j=i;while(j+1<vs.length&&vs[j+1]===vs[j]+1)j++;parts.push(i===j?String(vs[i]):`${vs[i]}-${vs[j]}`);i=j+1}return `${bibleBooks[bibleRt.b][0]} ${bibleRt.c+1}:${parts.join(', ')}`}
 const pinSvg='<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.6A2.6 2.6 0 1 1 12 6.4a2.6 2.6 0 0 1 0 5.2z"/></svg>';
 function bibleVerseHtml(b,c,v,t){
  const k=bkey(b,c,v),col=state.bible.hl[k],n=state.bible.notes[k],hl=bibleRt.hl,on=hl&&v>=hl[0]&&v<=hl[1],sel=bibleRt.sel.has(v),open=bibleRt.open.has(k)||(bibleRt.editing&&bibleRt.editing.k===k);
  const ref=bibleRefLabel(b,c,v);
- let h=`<span class="br-v${on?' hl':''}${col?' c-'+col:''}${sel?' sel':''}" id="bv-${v}" data-action="bible-verse" data-v="${v}" role="button" tabindex="0" aria-pressed="${sel}" aria-label="${esc(ref)}${col?', surligné':''}"><sup>${v}</sup>${esc(t)}</span>`;
- if(n){const ws=['p1','p2'].filter(w=>n[w]);h+=`<button type="button" class="br-pin${open?' open':''}" data-action="bible-pin" data-k="${k}" aria-expanded="${open}" aria-label="Note de ${esc(ws.map(whoName).join(' et '))} sur ${esc(ref)}">${pinSvg}${ws.map(w=>`<span style="background:${whoColor[w]}">${esc(whoName(w).slice(0,1).toUpperCase())}</span>`).join('')}</button>`}
+ let h=`<span class="br-v${on?' hl':''}${col?' c-'+col:''}${sel?' sel':''}${bibleRt.noteVs.has(v)?' in-note':''}${bibleRt.range&&bibleRt.rangeStart===v?' range-start':''}" id="bv-${v}" data-action="bible-verse" data-v="${v}" role="button" tabindex="0" aria-pressed="${sel}" aria-label="${esc(ref)}${col?', surligné':''}"><sup>${v}</sup>${esc(t)}</span>`;
+ if(n){const ws=['p1','p2'].filter(w=>n[w]);h+=`<button type="button" class="br-pin${open?' open':''}" data-action="bible-pin" data-k="${k}" aria-expanded="${open}" aria-label="Note de ${esc(ws.map(whoName).join(' et '))} sur ${esc(noteRefLabel(b,c,noteRange(n,ws[0],v)))}">${pinSvg}${ws.map(w=>`<span style="background:${whoColor[w]}">${esc(whoName(w).slice(0,1).toUpperCase())}</span>`).join('')}</button>`}
  h+=' ';
  if(open)h+=bibleNoteBlock(k,n||{},ref);
  return h;
 }
 function bibleNoteBlock(k,n,ref){
- const ed=bibleRt.editing&&bibleRt.editing.k===k?bibleRt.editing:null,me=bibleMe();
- const items=['p1','p2'].filter(w=>n[w]&&!(ed&&ed.who===w)).map(w=>`<span class="br-note-item" style="--who:${whoColor[w]}"><span class="br-note-head"><b>${esc(whoName(w))}</b><button type="button" class="text-link" data-action="bible-note-edit" data-k="${k}" data-who="${w}">Modifier</button></span><span class="br-note-text">${esc(n[w])}</span></span>`).join('');
- const editor=ed?`<span class="br-note-editor"><span class="br-note-head"><b>Note sur ${esc(ref)}</b><span class="br-who" role="group" aria-label="Qui écrit ?">${['p1','p2'].map(w=>`<button type="button" data-action="bible-who" data-who="${w}" aria-pressed="${ed.who===w}" style="--who:${whoColor[w]}">${esc(whoName(w))}</button>`).join('')}</span></span><label class="visually-hidden" for="bibleNoteText">Notre note</label><textarea id="bibleNoteText" maxlength="2000" rows="3" placeholder="Ce que ce verset nous dit, une prière, une question…">${esc(bibleRt.draft)}</textarea><span class="br-note-actions"><button type="button" class="btn" data-action="bible-note-save">Enregistrer</button><button type="button" class="btn secondary" data-action="bible-note-cancel">Annuler</button>${n[ed.who]?`<button type="button" class="text-link danger" data-action="bible-note-delete">Supprimer la note</button>`:''}</span></span>`
+ const ed=bibleRt.editing&&bibleRt.editing.k===k?bibleRt.editing:null,me=bibleMe(),[nb,nc,nv]=bkeySplit(k);
+ const rangeTag=w=>{const r=noteRange(n,w,nv);return r!==String(nv)?`<small class="br-note-ref">${esc(noteRefLabel(nb,nc,r))}</small>`:''};
+ const pv=ed?vsParse(ed.r):[],chv=(bibleRt.data&&bibleRt.data.b[nb]&&bibleRt.data.b[nb][nc])||[];
+ const items=['p1','p2'].filter(w=>n[w]&&!(ed&&ed.who===w)).map(w=>`<span class="br-note-item" style="--who:${whoColor[w]}"><span class="br-note-head"><b>${esc(whoName(w))}${rangeTag(w)}</b><button type="button" class="text-link" data-action="bible-note-edit" data-k="${k}" data-who="${w}">Modifier</button></span><span class="br-note-text">${esc(n[w])}</span></span>`).join('');
+ const editor=ed?`<span class="br-note-editor"><span class="br-note-head"><b>Note sur ${esc(noteRefLabel(nb,nc,ed.r))}</b><span class="br-who" role="group" aria-label="Qui écrit ?">${['p1','p2'].map(w=>`<button type="button" data-action="bible-who" data-who="${w}" aria-pressed="${ed.who===w}" style="--who:${whoColor[w]}">${esc(whoName(w))}</button>`).join('')}</span></span>${pv.length?`<span class="br-note-passage${bibleRt.pv||pv.length<=3?' open':''}">${pv.map(x=>`<span><sup>${x}</sup>${esc(chv[x-1]||'')}</span>`).join(' ')}</span>${pv.length>3?`<button type="button" class="text-link br-pv-toggle" data-action="bible-pv-toggle">${bibleRt.pv?'Replier le passage':`Voir tout le passage (${pv.length} versets)`}</button>`:''}`:''}<label class="visually-hidden" for="bibleNoteText">Notre note</label><textarea id="bibleNoteText" maxlength="2000" rows="3" placeholder="${pv.length>1?'Ce que ce passage nous dit':'Ce que ce verset nous dit'}, une prière, une question…">${esc(bibleRt.draft)}</textarea><span class="br-note-actions"><button type="button" class="btn" data-action="bible-note-save">Enregistrer</button><button type="button" class="btn secondary" data-action="bible-note-cancel">Annuler</button>${n[ed.who]?`<button type="button" class="text-link danger" data-action="bible-note-delete">Supprimer la note</button>`:''}</span></span>`
   :(!n[me]?`<button type="button" class="text-link br-note-add" data-action="bible-note-edit" data-k="${k}" data-who="${me}">+ Ajouter ma note</button>`:'');
  return `<span class="br-note" role="note">${items}${editor}</span>`;
 }
 function bibleToolsHtml(){
  if(!bibleRt.sel.size)return '';
- return `<div class="br-tools" role="toolbar" aria-label="Surligner ou annoter ${esc(bibleSelLabel())}"><span class="br-tools-ref">${esc(bibleSelLabel())}</span><span class="br-swatches">${bibleColors.map(([k,hex,name])=>`<button type="button" class="br-sw" style="--c:${hex}" data-action="bible-color" data-color="${k}" title="${name}" aria-label="Surligner en ${name}"></button>`).join('')}<button type="button" class="br-sw clear" data-action="bible-color" data-color="" title="Retirer le surlignage" aria-label="Retirer le surlignage">×</button></span><button type="button" class="br-tool" data-action="bible-note-new">✎ Note</button><button type="button" class="br-tool ghost" data-action="bible-unselect" aria-label="Annuler la sélection">Fermer</button></div>`;
+ return `<div class="br-tools" role="toolbar" aria-label="Surligner ou annoter ${esc(bibleSelLabel())}"><span class="br-tools-ref">${esc(bibleSelLabel())}</span><span class="br-swatches">${bibleColors.map(([k,hex,name])=>`<button type="button" class="br-sw" style="--c:${hex}" data-action="bible-color" data-color="${k}" title="${name}" aria-label="Surligner en ${name}"></button>`).join('')}<button type="button" class="br-sw clear" data-action="bible-color" data-color="" title="Retirer le surlignage" aria-label="Retirer le surlignage">×</button></span><button type="button" class="br-tool ghost br-range${bibleRt.range?' on':''}" data-action="bible-range" aria-pressed="${bibleRt.range}" title="Sélectionner une plage : premier verset, puis dernier">↔ Plage</button><button type="button" class="br-tool" data-action="bible-note-new">✎ Note</button>${bibleRt.range?`<span class="br-range-hint">${bibleRt.rangeStart==null?'Plage : touchons le premier verset':`Plage depuis le v. ${bibleRt.rangeStart} : touchons le dernier verset`}</span>`:''}<button type="button" class="br-tool ghost" data-action="bible-unselect" aria-label="Annuler la sélection">Fermer</button></div>`;
 }
 function biblePassagesHtml(){
  const d=bibleRt.data,B=state.bible,f=bibleRt.pf;
@@ -979,22 +995,27 @@ function biblePassagesHtml(){
  const count=key=>key==='all'?keys.length:key==='notes'?keys.filter(([k])=>B.notes[k]).length:keys.filter(([k])=>B.hl[k]===key).length;
  const shown=keys.filter(([k])=>f==='all'||(f==='notes'?!!B.notes[k]:B.hl[k]===f));
  const chips=[['all','Tous'],['notes','Avec une note'],...bibleColors.map(([k,,n])=>[k,n])].filter(([k])=>k==='all'||k==='notes'||count(k)).map(([k,n])=>`<button type="button" class="filter${f===k?' active':''}" data-action="bible-filter" data-filter="${k}">${bibleColorOk(k)?`<span class="bp-dot c-${k}"></span>`:''}${esc(n)} <small>${count(k)}</small></button>`).join('');
- const list=shown.slice(0,200).map(([k,[b,c,v]])=>{const col=B.hl[k],n=B.notes[k],t=d.b[b][c][v-1];return `<li><button type="button" class="bp-item" data-action="bible-go" data-b="${b}" data-c="${c}" data-v="${v}" data-open="1"><span class="bp-top">${col?`<span class="bp-dot c-${col}"></span>`:''}<b>${esc(bibleRefLabel(b,c,v))}</b>${n?`<span class="bp-pin">${pinSvg}</span>`:''}</span><span class="bp-text">${esc(t.length>170?t.slice(0,167)+'…':t)}</span>${n?['p1','p2'].filter(w=>n[w]).map(w=>`<span class="bp-note" style="--who:${whoColor[w]}"><i>${esc(whoName(w))}</i> ${esc(n[w].length>160?n[w].slice(0,157)+'…':n[w])}</span>`).join(''):''}</button></li>`}).join('');
+ const list=shown.slice(0,200).map(([k,[b,c,v]])=>{const col=B.hl[k],n=B.notes[k],rw=n&&['p1','p2'].find(w=>n[w]&&n['r'+w]),r=rw?noteRange(n,rw,v):String(v),rv=vsParse(r).filter(x=>d.b[b][c][x-1]!==undefined),t=(rv.length?rv:[v]).map(x=>d.b[b][c][x-1]).join(' ');return `<li><button type="button" class="bp-item" data-action="bible-go" data-b="${b}" data-c="${c}" data-v="${v}" data-open="1"><span class="bp-top">${col?`<span class="bp-dot c-${col}"></span>`:''}<b>${esc(rw?noteRefLabel(b,c,r):bibleRefLabel(b,c,v))}</b>${n?`<span class="bp-pin">${pinSvg}</span>`:''}</span><span class="bp-text">${esc(t.length>170?t.slice(0,167)+'…':t)}</span>${n?['p1','p2'].filter(w=>n[w]).map(w=>`<span class="bp-note" style="--who:${whoColor[w]}"><i>${esc(whoName(w))}</i> ${esc(n[w].length>160?n[w].slice(0,157)+'…':n[w])}</span>`).join(''):''}</button></li>`}).join('');
  return `<div class="section-heading bp-head"><div><h2>Nos passages</h2><small>Les versets que nous avons surlignés ou annotés, à deux.</small></div></div>`+(keys.length?`<div class="filters bp-filters">${chips}</div>${shown.length?`<ol class="bp-list">${list}</ol>${shown.length>200?`<p class="br-status">Et ${shown.length-200} autres…</p>`:''}`:'<p class="br-status">Rien dans ce filtre pour l’instant.</p>'}`:'<p class="br-status bp-empty">Touchons un verset pour le surligner ou y ajouter une note : il apparaîtra ici, chez nous deux.</p>');
 }
 function bibleAfterChange(){save();bibleMount()}
 function bibleAction2(a,btn){
  const B=state.bible;
- if(a==='bible-verse'){const v=Number(btn.dataset.v);if(!v)return true;if(bibleRt.sel.has(v))bibleRt.sel.delete(v);else bibleRt.sel.add(v);bibleRt.hl=null;bibleMount();document.getElementById('bv-'+v)?.focus({preventScroll:true});return true}
- if(a==='bible-unselect'){bibleRt.sel.clear();bibleMount();return true}
- if(a==='bible-color'){const c=btn.dataset.color;for(const v of bibleRt.sel){const k=bkey(bibleRt.b,bibleRt.c,v);if(bibleColorOk(c))B.hl[k]=c;else delete B.hl[k]}const n=bibleRt.sel.size;bibleRt.sel.clear();bibleAfterChange();toast(bibleColorOk(c)?(n>1?'Versets surlignés ♡':'Verset surligné ♡'):'Surlignage retiré.');return true}
- if(a==='bible-note-new'){const v=Math.min(...bibleRt.sel),k=bkey(bibleRt.b,bibleRt.c,v),me=bibleMe();bibleRt.editing={k,who:me};bibleRt.draft=(B.notes[k]&&B.notes[k][me])||'';bibleRt.open.add(k);bibleRt.sel.clear();bibleMount();$('#bibleNoteText')?.focus();return true}
+ if(a==='bible-verse'){const v=Number(btn.dataset.v);if(!v)return true;
+  if(bibleRt.range){if(bibleRt.rangeStart==null){bibleRt.rangeStart=v;bibleRt.sel.add(v)}else{const lo=Math.min(bibleRt.rangeStart,v),hi=Math.max(bibleRt.rangeStart,v);for(let x=lo;x<=hi;x++)bibleRt.sel.add(x);bibleRt.rangeStart=null}}
+  else if(bibleRt.sel.has(v))bibleRt.sel.delete(v);else bibleRt.sel.add(v);
+  bibleRt.lastV=v;if(!bibleRt.sel.size){bibleRt.range=false;bibleRt.rangeStart=null}bibleRt.hl=null;bibleMount();document.getElementById('bv-'+v)?.focus({preventScroll:true});return true}
+ if(a==='bible-unselect'){bibleRt.sel.clear();bibleRt.range=false;bibleRt.rangeStart=null;bibleMount();return true}
+ if(a==='bible-range'){bibleRt.range=!bibleRt.range;bibleRt.rangeStart=bibleRt.range&&bibleRt.sel.has(bibleRt.lastV)?bibleRt.lastV:null;bibleMount();return true}
+ if(a==='bible-pv-toggle'){bibleRt.pv=!bibleRt.pv;bibleMount();return true}
+ if(a==='bible-color'){const c=btn.dataset.color;for(const v of bibleRt.sel){const k=bkey(bibleRt.b,bibleRt.c,v);if(bibleColorOk(c))B.hl[k]=c;else delete B.hl[k]}const n=bibleRt.sel.size;bibleRt.sel.clear();bibleRt.range=false;bibleRt.rangeStart=null;bibleAfterChange();toast(bibleColorOk(c)?(n>1?'Versets surlignés ♡':'Verset surligné ♡'):'Surlignage retiré.');return true}
+ if(a==='bible-note-new'){if(!bibleRt.sel.size)return true;const v=Math.max(...bibleRt.sel),k=bkey(bibleRt.b,bibleRt.c,v),me=bibleMe();bibleRt.editing={k,who:me,r:vsCompress([...bibleRt.sel])};bibleRt.range=false;bibleRt.rangeStart=null;bibleRt.pv=false;bibleRt.draft=(B.notes[k]&&B.notes[k][me])||'';bibleRt.open.add(k);bibleRt.sel.clear();bibleMount();$('#bibleNoteText')?.focus();return true}
  if(a==='bible-pin'){const k=btn.dataset.k;if(bibleRt.open.has(k)){bibleRt.open.delete(k);if(bibleRt.editing&&bibleRt.editing.k===k)bibleRt.editing=null}else bibleRt.open.add(k);bibleMount();document.querySelector(`.br-pin[data-k="${k}"]`)?.focus();return true}
- if(a==='bible-note-edit'){const k=btn.dataset.k,w=btn.dataset.who==='p2'?'p2':'p1';if(!bibleKeyOk(k))return true;bibleRt.editing={k,who:w};bibleRt.draft=(B.notes[k]&&B.notes[k][w])||'';bibleRt.open.add(k);bibleMount();$('#bibleNoteText')?.focus();return true}
- if(a==='bible-who'){if(bibleRt.editing){const w=btn.dataset.who==='p2'?'p2':'p1',k=bibleRt.editing.k,cur=B.notes[k]||{};if(!bibleRt.draft.trim()||bibleRt.draft===(cur[bibleRt.editing.who]||''))bibleRt.draft=cur[w]||'';bibleRt.editing.who=w;bibleMount();$('#bibleNoteText')?.focus()}return true}
- if(a==='bible-note-save'){const ed=bibleRt.editing;if(!ed)return true;const t=bibleRt.draft.trim().slice(0,2000),n={...(B.notes[ed.k]||{})};if(t)n[ed.who]=t;else delete n[ed.who];if(n.p1||n.p2)B.notes[ed.k]=n;else{delete B.notes[ed.k];bibleRt.open.delete(ed.k)}bibleRt.editing=null;bibleRt.draft='';bibleAfterChange();toast(t?'Note enregistrée ♡':'Note retirée.');return true}
+ if(a==='bible-note-edit'){const k=btn.dataset.k,w=btn.dataset.who==='p2'?'p2':'p1';if(!bibleKeyOk(k))return true;const n0=B.notes[k]||{};bibleRt.editing={k,who:w,r:noteRange(n0,n0[w]||!n0[w==='p1'?'p2':'p1']?w:(w==='p1'?'p2':'p1'),bkeySplit(k)[2])};bibleRt.pv=false;bibleRt.draft=(B.notes[k]&&B.notes[k][w])||'';bibleRt.open.add(k);bibleMount();$('#bibleNoteText')?.focus();return true}
+ if(a==='bible-who'){if(bibleRt.editing){const w=btn.dataset.who==='p2'?'p2':'p1',k=bibleRt.editing.k,cur=B.notes[k]||{};if(!bibleRt.draft.trim()||bibleRt.draft===(cur[bibleRt.editing.who]||''))bibleRt.draft=cur[w]||'';if(cur[w])bibleRt.editing.r=noteRange(cur,w,bkeySplit(k)[2]);bibleRt.editing.who=w;bibleMount();$('#bibleNoteText')?.focus()}return true}
+ if(a==='bible-note-save'){const ed=bibleRt.editing;if(!ed)return true;const t=bibleRt.draft.trim().slice(0,2000),n={...(B.notes[ed.k]||{})},r=vsCompress(vsParse(ed.r));if(t){n[ed.who]=t;if(r&&r!==String(bkeySplit(ed.k)[2]))n['r'+ed.who]=r;else delete n['r'+ed.who]}else{delete n[ed.who];delete n['r'+ed.who]}if(n.p1||n.p2)B.notes[ed.k]=n;else{delete B.notes[ed.k];bibleRt.open.delete(ed.k)}bibleRt.editing=null;bibleRt.draft='';bibleAfterChange();toast(t?'Note enregistrée ♡':'Note retirée.');return true}
  if(a==='bible-note-cancel'){bibleRt.editing=null;bibleRt.draft='';bibleMount();return true}
- if(a==='bible-note-delete'){const ed=bibleRt.editing;if(ed&&confirm('Supprimer cette note ?')){const n={...(B.notes[ed.k]||{})};delete n[ed.who];if(n.p1||n.p2)B.notes[ed.k]=n;else{delete B.notes[ed.k];bibleRt.open.delete(ed.k)}bibleRt.editing=null;bibleRt.draft='';bibleAfterChange();toast('Note supprimée.')}return true}
+ if(a==='bible-note-delete'){const ed=bibleRt.editing;if(ed&&confirm('Supprimer cette note ?')){const n={...(B.notes[ed.k]||{})};delete n[ed.who];delete n['r'+ed.who];if(n.p1||n.p2)B.notes[ed.k]=n;else{delete B.notes[ed.k];bibleRt.open.delete(ed.k)}bibleRt.editing=null;bibleRt.draft='';bibleAfterChange();toast('Note supprimée.')}return true}
  if(a==='bible-filter'){const f=btn.dataset.filter;if(f==='all'||f==='notes'||bibleColorOk(f)){bibleRt.pf=f;bibleMount()}return true}
  return false;
 }
@@ -1599,7 +1620,7 @@ function flattenState(s){
  for(const [k,v] of Object.entries(s.carnet.budget))put('cb:'+k,v);
  if(s.carnet.bigDate!==null)put('cbig',s.carnet.bigDate);
  for(const [d,f] of Object.entries(s.qflags||{}))for(const k of Object.keys(f))put('qf:'+d+':'+k,true);
- const sb=s.bible||{hl:{},notes:{}};for(const [k,v] of Object.entries(sb.hl))put('bh:'+k,v);for(const [k,n] of Object.entries(sb.notes))for(const w of ['p1','p2'])if(n[w])put('bn:'+k+':'+w,n[w]);
+ const sb=s.bible||{hl:{},notes:{}};for(const [k,v] of Object.entries(sb.hl))put('bh:'+k,v);for(const [k,n] of Object.entries(sb.notes))for(const w of ['p1','p2'])if(n[w]){put('bn:'+k+':'+w,n[w]);if(n['r'+w])put('bv:'+k+':'+w,n['r'+w])}
  (s.myplans||[]).forEach(p=>{const {themes,...head}=p;put('mp:'+p.id,head);themes.forEach(t=>put('mt:'+p.id+':'+t.id,t))});
  const fo=s.foi||{done:{},notes:{},paths:[],py:[],prayed:{}};for(const k of Object.keys(fo.done))put('fd:'+k,true);for(const [k,v] of Object.entries(fo.notes))put('fn:'+k,v);fo.paths.forEach(x=>put('fp:'+x.id,x));fo.py.forEach(x=>put('fy:'+x.id,x));for(const [d,v] of Object.entries(fo.prayed))put('fq:'+d,v);
  if(s.photos)for(const n of ['p1','p2'])if(s.photos[n])put('ph:'+n,s.photos[n]);
@@ -1625,6 +1646,7 @@ function stateFromItems(items,prev){
   else if((m=/^bh:(.+)$/.exec(k)))bhl[m[1]]=v;
   else if((m=/^qf:(\d{4}-\d{2}-\d{2}):(v1|v2|r)$/.exec(k))){if(v===true)(qflags[m[1]]=qflags[m[1]]||{})[m[2]]=true}
   else if((m=/^bn:(.+):(p[12])$/.exec(k)))(bnotes[m[1]]=bnotes[m[1]]||{})[m[2]]=v;
+  else if((m=/^bv:(.+):(p[12])$/.exec(k)))(bnotes[m[1]]=bnotes[m[1]]||{})['r'+m[2]]=v;
   else if((m=/^fd:(.+)$/.exec(k))){if(v===true)fdone[m[1]]=true}
   else if((m=/^fn:(.+)$/.exec(k)))fnotes[m[1]]=v;
   else if((m=/^fq:(.+)$/.exec(k)))fprayed[m[1]]=v;
