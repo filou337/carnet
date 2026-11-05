@@ -625,6 +625,7 @@ body.auth-open .app,body.auth-open #backdrop{display:none!important}
 :root[data-scheme="dark"] .sync-code-wrap{border-color:#4a3b35;background:var(--paper)}
 .mode-toggle{height:36px;width:36px;display:inline-grid;place-items:center;border:1px solid var(--line);border-radius:11px;background:var(--white);color:var(--ink);flex-shrink:0}.mode-toggle:hover{border-color:var(--brand);color:var(--brand)}.mode-toggle svg{width:18px;height:18px}
 .mode-choice .swatch{display:grid;place-items:center;font-size:15px;color:var(--ink)}.mode-choice .swatch.m-light{background:#f8f6f2;color:#b8862e;border:1px solid #e3dcd5}.mode-choice .swatch.m-dark{background:#201c1b;color:#e9d9a8;border:1px solid #3a3330}.mode-choice .swatch.m-auto{background:linear-gradient(135deg,#f8f6f2 50%,#201c1b 50%);border:1px solid #9b918b}
+.notif-opts{display:flex;flex-direction:column;gap:13px;margin:8px 0 16px}.notif-line{align-items:flex-start!important}.notif-line input{margin-top:2px!important;accent-color:var(--brand)}.notif-line span{display:flex;flex-direction:column;gap:1px}.notif-line small{color:var(--muted);font-size:11.5px;line-height:1.4}.notif-hour{margin:-4px 0 0 28px;max-width:170px}.notif-note{font-size:11.5px;color:var(--muted);margin:14px 0 0;line-height:1.5}
 </style>
 </head>
 <body>
@@ -978,7 +979,7 @@ document.addEventListener('input',e=>{if(e.target.id==='bibleNoteText')bibleRt.d
 document.addEventListener('keydown',e=>{const v=e.target.closest&&e.target.closest('.br-v');if(v&&(e.key==='Enter'||e.key===' ')){e.preventDefault();clickAction(v)}});
 function renderBible(){const verse=verses[qIndex%verses.length];return pageIntro('Foi, amour & gratitude','Cheminer dans la foi, à deux.','Quelques paroles pour s’encourager, prendre du recul et avancer ensemble.')+`<div class="card bible-hero"><div style="position:relative;z-index:1"><span class="eyebrow" style="color:#78917c">✦ &nbsp; Notre passage du jour</span><h2>« ${esc(verse.text)} »</h2><p>${esc(verse.ref)} · Louis Segond 1910</p></div></div>${renderBibleReader()}<div class="section-heading"><h2>Des versets à méditer ensemble</h2></div><section class="page-grid">${verses.map((v,i)=>`<div class="card verse-card"><span class="badge">${i===0?'Patience':i===1?'Unité':'Amour'}</span><p>« ${esc(v.text)} »</p><small>${esc(v.ref)} · LSG 1910</small></div>`).join('')}</section><div class="section-heading"><h2>Un moment pour se confier</h2><small>Journal privé sur cet appareil</small></div><section class="card note-card"><span class="eyebrow">Notre prière / gratitude du jour</span><h3>Ce qu’on porte dans nos cœurs.</h3><p class="text-muted" style="font-size:12px;margin-bottom:17px">Un merci, une pensée, une intention de prière…</p><label class="visually-hidden" for="prayerNote">Notre prière ou pensée du jour</label><textarea id="prayerNote" maxlength="4000" placeholder="Aujourd'hui, nous aimerions remercier Dieu pour…">${esc(state.prayers[todayKey]||'')}</textarea><br><button class="btn" data-action="save-prayer">${icons.check} Enregistrer notre pensée</button></section>`}
 function renderProjects(){return pageIntro('Nos idées pour demain','Construire quelque chose de beau.','Un tableau simple pour donner vie aux projets qui nous tiennent à cœur.',`<button class="btn" data-action="add-project">${icons.plus} Nouveau projet</button>`)+(state.projects.length?`<section class="page-grid">${state.projects.map(p=>`<article class="card tile"><div class="tile-top"><div class="tile-icon">${icons.spark}</div><button class="icon-small" aria-label="Supprimer ${esc(p.title)}" data-action="delete-project" data-id="${esc(p.id)}">${icons.trash}</button></div><h3>${esc(p.title)}</h3><p>${esc(p.note||'Chaque petit pas compte.')}</p><div class="small-line"><span>Avancement</span><strong>${Number(p.progress)||0} %</strong></div><div class="progress-track"><div class="progress-bar" style="width:${[0,25,50,75,100].includes(Number(p.progress))?Number(p.progress):0}%"></div></div><div class="project-bottom"><span class="badge">${Number(p.progress)===100?'Terminé !':'Ensemble, pas à pas'}</span><label class="visually-hidden" for="prog-${esc(p.id)}">Progression du projet ${esc(p.title)}</label><select id="prog-${esc(p.id)}" data-progress="${esc(p.id)}">${[0,25,50,75,100].map(n=>`<option value="${n}" ${Number(p.progress)===n?'selected':''}>${n} %</option>`).join('')}</select></div></article>`).join('')}</section>`:empty('De quoi rêvons-nous ensemble ?','Notre premier projet pourrait commencer par une simple idée.'))}
-function renderSettings(){const s=state.settings;return pageIntro('Les détails qui nous ressemblent','Personnaliser notre espace.','À notre image : nos prénoms, notre date, notre ambiance et nos souvenirs.')+`<div class="settings-grid"><section class="card settings-box"><h3>Nos profils ♡</h3><p>Deux personnes, une seule belle aventure.</p><form id="settingsForm"><div class="photo-field"><div class="avatar" id="photoPrev1">${avatarInner('p1')}</div><div><div class="photo-actions"><label>Choisir une photo<input type="file" accept="image/*" data-photo="p1"></label>${state.photos['p1']?`<button type="button" data-action="photo-remove" data-who="p1">Retirer</button>`:''}</div></div></div><div class="field"><label for="setP1">Personne 1 · Prénom</label><input id="setP1" name="p1" required maxlength="35" value="${esc(s.p1)}"></div><div class="field"><label for="setBio1">Petit mot pour le profil 1</label><input id="setBio1" name="bio1" maxlength="80" placeholder="Ex : Le cœur aventurier" value="${esc(s.bio1)}"></div><div class="photo-field"><div class="avatar second" id="photoPrev2">${avatarInner('p2')}</div><div><div class="photo-actions"><label>Choisir une photo<input type="file" accept="image/*" data-photo="p2"></label>${state.photos['p2']?`<button type="button" data-action="photo-remove" data-who="p2">Retirer</button>`:''}</div></div></div><div class="field"><label for="setP2">Personne 2 · Prénom</label><input id="setP2" name="p2" required maxlength="35" value="${esc(s.p2)}"></div><div class="field"><label for="setBio2">Petit mot pour le profil 2</label><input id="setBio2" name="bio2" maxlength="80" placeholder="Ex : La douceur du quotidien" value="${esc(s.bio2)}"></div><div class="field"><label for="setSince">Depuis quand sommes-nous ensemble ?</label><input id="setSince" name="since" type="date" value="${esc(s.since)}"></div><button class="btn" type="submit">${icons.check} Enregistrer nos profils</button></form></section><div style="display:flex;flex-direction:column;gap:20px">${accountCard()}${syncCard()}${installCard()}<section class="card settings-box"><h3>Jour ou nuit</h3><p>Sur ce téléphone. En « Auto », l’appli suit le réglage du téléphone.</p><div class="theme-choices">${[['light','Jour','☀'],['dark','Nuit','☾'],['auto','Auto','']].map(([v,l,ic])=>`<button class="theme-choice mode-choice ${getMode()===v?'selected':''}" data-set-mode="${v}" aria-pressed="${getMode()===v}"><span class="swatch m-${v}">${ic}</span>${l}</button>`).join('')}</div></section><section class="card settings-box"><h3>L’ambiance du cocon</h3><p>Choisissons la touche de couleur de notre espace.</p><div class="theme-choices">${[['rose','Terracotta'],['sage','Sauge'],['lilas','Lilas']].map(([value,label])=>`<button class="theme-choice ${s.theme===value?'selected':''}" data-action="set-theme" data-theme="${value}" aria-pressed="${s.theme===value}"><span class="swatch ${value==='rose'?'':value}"></span>${label}</button>`).join('')}</div></section><section class="card settings-box"><h3>Nos données</h3><p>Tout reste sur ce navigateur. Exportons nos souvenirs pour les conserver ou les déplacer sur un autre appareil.</p>${!canStore?'<div class="notice">Ce navigateur ne permet pas de sauvegarder localement ici. Exportons régulièrement nos données.</div>':''}<div class="stack"><button class="btn secondary" data-action="export-data">Exporter en JSON</button><button class="btn secondary" data-action="import-data">Importer</button><input id="importFile" type="file" accept="application/json,.json" hidden></div><div class="notice">${sync?'Nos données sont aussi partagées, chiffrées, entre nos deux téléphones.':'Sans espace partagé, les données restent sur ce téléphone uniquement.'} Les réponses sont visibles par toute personne utilisant ce navigateur.</div><button class="text-link" data-action="reset-data" style="padding-left:0;color:#a24d55">Effacer toutes les données</button></section></div></div>`}
+function renderSettings(){const s=state.settings;return pageIntro('Les détails qui nous ressemblent','Personnaliser notre espace.','À notre image : nos prénoms, notre date, notre ambiance et nos souvenirs.')+`<div class="settings-grid"><section class="card settings-box"><h3>Nos profils ♡</h3><p>Deux personnes, une seule belle aventure.</p><form id="settingsForm"><div class="photo-field"><div class="avatar" id="photoPrev1">${avatarInner('p1')}</div><div><div class="photo-actions"><label>Choisir une photo<input type="file" accept="image/*" data-photo="p1"></label>${state.photos['p1']?`<button type="button" data-action="photo-remove" data-who="p1">Retirer</button>`:''}</div></div></div><div class="field"><label for="setP1">Personne 1 · Prénom</label><input id="setP1" name="p1" required maxlength="35" value="${esc(s.p1)}"></div><div class="field"><label for="setBio1">Petit mot pour le profil 1</label><input id="setBio1" name="bio1" maxlength="80" placeholder="Ex : Le cœur aventurier" value="${esc(s.bio1)}"></div><div class="photo-field"><div class="avatar second" id="photoPrev2">${avatarInner('p2')}</div><div><div class="photo-actions"><label>Choisir une photo<input type="file" accept="image/*" data-photo="p2"></label>${state.photos['p2']?`<button type="button" data-action="photo-remove" data-who="p2">Retirer</button>`:''}</div></div></div><div class="field"><label for="setP2">Personne 2 · Prénom</label><input id="setP2" name="p2" required maxlength="35" value="${esc(s.p2)}"></div><div class="field"><label for="setBio2">Petit mot pour le profil 2</label><input id="setBio2" name="bio2" maxlength="80" placeholder="Ex : La douceur du quotidien" value="${esc(s.bio2)}"></div><div class="field"><label for="setSince">Depuis quand sommes-nous ensemble ?</label><input id="setSince" name="since" type="date" value="${esc(s.since)}"></div><button class="btn" type="submit">${icons.check} Enregistrer nos profils</button></form></section><div style="display:flex;flex-direction:column;gap:20px">${accountCard()}${syncCard()}${notifCard()}${installCard()}<section class="card settings-box"><h3>Jour ou nuit</h3><p>Sur ce téléphone. En « Auto », l’appli suit le réglage du téléphone.</p><div class="theme-choices">${[['light','Jour','☀'],['dark','Nuit','☾'],['auto','Auto','']].map(([v,l,ic])=>`<button class="theme-choice mode-choice ${getMode()===v?'selected':''}" data-set-mode="${v}" aria-pressed="${getMode()===v}"><span class="swatch m-${v}">${ic}</span>${l}</button>`).join('')}</div></section><section class="card settings-box"><h3>L’ambiance du cocon</h3><p>Choisissons la touche de couleur de notre espace.</p><div class="theme-choices">${[['rose','Terracotta'],['sage','Sauge'],['lilas','Lilas']].map(([value,label])=>`<button class="theme-choice ${s.theme===value?'selected':''}" data-action="set-theme" data-theme="${value}" aria-pressed="${s.theme===value}"><span class="swatch ${value==='rose'?'':value}"></span>${label}</button>`).join('')}</div></section><section class="card settings-box"><h3>Nos données</h3><p>Tout reste sur ce navigateur. Exportons nos souvenirs pour les conserver ou les déplacer sur un autre appareil.</p>${!canStore?'<div class="notice">Ce navigateur ne permet pas de sauvegarder localement ici. Exportons régulièrement nos données.</div>':''}<div class="stack"><button class="btn secondary" data-action="export-data">Exporter en JSON</button><button class="btn secondary" data-action="import-data">Importer</button><input id="importFile" type="file" accept="application/json,.json" hidden></div><div class="notice">${sync?'Nos données sont aussi partagées, chiffrées, entre nos deux téléphones.':'Sans espace partagé, les données restent sur ce téléphone uniquement.'} Les réponses sont visibles par toute personne utilisant ce navigateur.</div><button class="text-link" data-action="reset-data" style="padding-left:0;color:#a24d55">Effacer toutes les données</button></section></div></div>`}
 /* ─── Suivi des dépenses ─── */
 const euro = n=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'}).format(Number(n)||0);
 const safeMoney=n=>{if(n===null||n===undefined||n==='')return null;const num=Number(n);return Number.isFinite(num)&&num>=0&&num<=1e6?Math.round(num*100)/100:null};
@@ -1020,7 +1021,7 @@ let finHiddenPrev=null;
 function surpriseCheck(){
  const now=new Set(state.finance.entries.filter(amountHidden).map(r=>r.id));
  if(finHiddenPrev){const opened=state.finance.entries.filter(r=>finHiddenPrev.has(r.id)&&!now.has(r.id));
-  if(opened.length){const r=opened[0];setTimeout(()=>{toast(`🎁 Surprise révélée : ${r.title} · ${euro(r.actual??r.planned)}`);if(typeof carnetBurst==='function')carnetBurst(innerWidth/2,innerHeight/2,22,240)},50)}}
+  if(opened.length){const r=opened[0];try{const np=notifPrefs();if(np.on&&np.sur&&!notifShown()['sur:'+r.id]){markShown(['sur:'+r.id]);if(document.hidden)showNotif('🎁 Surprise révélée',`${r.title} · ${euro(r.actual??r.planned)}`,'depenses','sur:'+r.id)}}catch(e){}setTimeout(()=>{toast(`🎁 Surprise révélée : ${r.title} · ${euro(r.actual??r.planned)}`);if(typeof carnetBurst==='function')carnetBurst(innerWidth/2,innerHeight/2,22,240)},50)}}
  const changed=!finHiddenPrev||finHiddenPrev.size!==now.size||[...now].some(i=>!finHiddenPrev.has(i));finHiddenPrev=now;return changed;
 }
 function surpriseChanged(){if(!finHiddenPrev)return false;const now=state.finance.entries.filter(amountHidden).map(r=>r.id);return now.length!==finHiddenPrev.size||now.some(i=>!finHiddenPrev.has(i))}
@@ -1557,7 +1558,7 @@ async function flushSync(){
 function onRemoteItem(raw){syncRt.queue.push(raw);if(!syncRt.queueTimer)syncRt.queueTimer=setTimeout(processRemote,60)}
 async function processRemote(){
  syncRt.queueTimer=null;if(!sync||!syncRt.crypto){syncRt.queue=[];return}
- const batch=syncRt.queue.splice(0);let changed=false,resend=false;
+ const batch=syncRt.queue.splice(0);let changed=false,resend=false;const acts=[];
  for(const r of batch){
   try{
    if(!r||typeof r.v!=='string'||typeof r.t!=='number'||r.v.length>40000)continue;
@@ -1573,6 +1574,7 @@ async function processRemote(){
     const m=mergeText(textOf(o.b),textOf(cur.h),textOf(o.h)),mh=m?JSON.stringify(m):null;
     if(mh!==o.h){sync.items[o.k]={t:Math.max(r.t,cur.t)+1,h:mh};queuePush(o.k);resend=changed=true;continue}
    }
+   if(!mine&&o.h!==null&&(!cur||cur.h==null)&&r.t>Date.now()-15*60000)acts.push({k:o.k,h:o.h});
    sync.items[o.k]={t:r.t,h:o.h};sync.pending=sync.pending.filter(x=>x!==o.k);changed=true;
   }catch(e){/* contenu illisible : ignoré */}
  }
@@ -1583,6 +1585,7 @@ async function processRemote(){
  try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}
  saveSyncMeta();
  if(isEditing()){syncRt.pendingRender=true;patchLiveFields()}else render();
+ if(acts.length)try{notifyActivity(acts)}catch(e){console.warn('Notifications',e)}
 }
 // Écriture à deux dans un même texte : fusion des modifications de chacun.
 const isTextKey=k=>/^(an:|pr:|cn:|bn:)/.test(k);
@@ -2000,7 +2003,7 @@ state.myplans=sanitizeMyPlans(state.myplans);
 state.bible=sanitizeBible(state.bible);
 state.qflags=sanitizeQFlags(state.qflags);
 
-function render(){document.documentElement.dataset.theme=['rose','sage','lilas'].includes(state.settings.theme)?state.settings.theme:'rose';updateHeader();const html={accueil:renderHome,calendrier:renderCalendar,plans:renderPlans,bible:renderBible,projets:renderProjects,depenses:renderFinance,parametres:renderSettings};surpriseCheck();$('#pageContent').innerHTML=(html[page]||renderHome)();syncDecorate();if(page==='bible')bibleMount()}
+function render(){notifSyncSoon();document.documentElement.dataset.theme=['rose','sage','lilas'].includes(state.settings.theme)?state.settings.theme:'rose';updateHeader();const html={accueil:renderHome,calendrier:renderCalendar,plans:renderPlans,bible:renderBible,projets:renderProjects,depenses:renderFinance,parametres:renderSettings};surpriseCheck();$('#pageContent').innerHTML=(html[page]||renderHome)();syncDecorate();if(page==='bible')bibleMount()}
 function go(dest){if(!['accueil','calendrier','plans','bible','projets','depenses','parametres'].includes(dest))dest='accueil';page=dest;history.replaceState(null,'','#'+dest);render();window.scrollTo({top:0,behavior:'instant'});setMobileOpen(false)}
 function setMobileOpen(open){$('#sidebar').classList.toggle('open',open);$('#backdrop').classList.toggle('show',open);$('#mobileMenu').setAttribute('aria-expanded',String(open));$('#mobileMenu').setAttribute('aria-label',open?'Fermer le menu':'Ouvrir le menu')}
 function openDialog(id){const d=document.getElementById(id);if(typeof d.showModal==='function')d.showModal();else d.setAttribute('open','');}
@@ -2100,6 +2103,112 @@ document.addEventListener('change',async e=>{const n=e.target.dataset&&e.target.
 document.addEventListener('click',e=>{const b=e.target.closest('[data-action=photo-remove]');if(!b)return;const n=b.dataset.who;if(n==='p1'||n==='p2'){setPhoto(n,'');toast('Photo retirée.')}});
 document.addEventListener('submit',e=>{if(e.target.id==='settingsForm'){e.preventDefault();const f=e.target.elements;const p1=f.p1.value.trim(),p2=f.p2.value.trim();if(!p1||!p2)return;state.settings={...state.settings,p1,p2,bio1:f.bio1.value.trim(),bio2:f.bio2.value.trim(),since:f.since.value};save();render();toast('Nos profils ont été enregistrés ♡')}});
 document.addEventListener('change',async e=>{if(e.target.id!=='importFile')return;const file=e.target.files?.[0];if(!file)return;try{if(file.size>2e6)throw Error('Fichier trop volumineux');const imported=normalizeImport(JSON.parse(await file.text()));if(confirm(sync?'Importer cette sauvegarde ? Elle remplacera toutes les données actuelles, y compris dans notre espace partagé (sur les deux téléphones).':'Importer cette sauvegarde ? Elle remplacera toutes les données actuelles.')){state=imported;allowWipe=true;save();render();toast('Nos souvenirs ont été restaurés ♡')}}catch(err){toast('Import impossible : vérifions le fichier JSON.')}finally{e.target.value=''}});
+// ─── Notifications (sans serveur) ───
+// Appli ouverte ou en arrière-plan : la page prévient elle-même. Appli fermée : le service worker
+// relit de temps en temps (Periodic Background Sync, Chrome Android) la liste des rappels préparée ici.
+var NOTIF_KEY='adeux-notif',NOTIF_SHOWN='adeux-notif-shown',NOTIF_CACHE='adeux-notif',notifSyncT=null,notifLast='';
+var notifDefaults={on:false,q:true,qh:'20:00',cal:true,act:true,sur:true};
+function notifPrefs(){try{const o=JSON.parse(localStorage.getItem(NOTIF_KEY)||'{}');const p={...notifDefaults,...(o&&typeof o==='object'?o:{})};if(!/^\d{2}:\d{2}$/.test(p.qh))p.qh='20:00';return p}catch(e){return {...notifDefaults}}}
+function setNotifPrefs(p){try{localStorage.setItem(NOTIF_KEY,JSON.stringify(p))}catch(e){}notifSyncSoon(true)}
+function notifSupported(){return typeof window.Notification==='function'}
+function notifGranted(){return notifSupported()&&Notification.permission==='granted'}
+function notifShown(){try{const o=JSON.parse(localStorage.getItem(NOTIF_SHOWN)||'{}');return o&&typeof o==='object'?o:{}}catch(e){return {}}}
+function markShown(ids){const sh=notifShown(),now=Date.now();ids.forEach(i=>sh[i]=now);for(const k of Object.keys(sh))if(now-sh[k]>10*864e5)delete sh[k];try{localStorage.setItem(NOTIF_SHOWN,JSON.stringify(sh))}catch(e){}}
+async function showNotif(title,body,pg,tag){
+ if(!notifGranted())return false;
+ const opt={body:body||'',tag:tag||'adeux',icon:'icons/icon-192.png',badge:'icons/icon-192.png',lang:'fr',data:{page:pg||'accueil'}};
+ try{const reg=navigator.serviceWorker?await navigator.serviceWorker.getRegistration():null;if(reg&&reg.showNotification){await reg.showNotification(title,opt);return true}new Notification(title,opt);return true}catch(e){console.warn('Notification',e);return false}
+}
+function partnerName(){const me=sync&&sync.me,o=me==='p1'?'p2':me==='p2'?'p1':null;return {o,name:o?(state.settings[o]||'Ma moitié'):'Ma moitié'}}
+function verseRefOf(m){const b=+m[1],c=+m[2],v=+m[3];return bibleBooks[b]?bibleRefLabel(b,c,v):'un verset'}
+// Ce que l'autre vient d'ajouter (éléments nouveaux reçus par la synchro).
+function notifyActivity(acts){
+ const p=notifPrefs();if(!p.on)return;
+ const {o,name}=partnerName(),msgs=[],day=dateKey(new Date());let hl=0,hlRef='';
+ for(const {k,h} of acts){let v=null,m;try{v=JSON.parse(h)}catch(e){}
+  if((m=/^qf:(\d{4}-\d{2}-\d{2}):(v1|v2|r)$/.exec(k))){if(m[1]!==day)continue;const f=(state.qflags||{})[m[1]]||{};
+   if(m[2]==='r')msgs.push({kind:'q',title:`${name} a découvert nos réponses ♡`,body:'La question du jour nous attend.',page:'accueil',tag:'q'});
+   else if(f.v1&&f.v2&&!f.r)msgs.push({kind:'q',title:'Nos deux réponses sont prêtes ♡',body:'Découvrons-les ensemble.',page:'accueil',tag:'q'});
+   else if(!o||m[2]==='v'+o.slice(1))msgs.push({kind:'q',title:`${name} a répondu à la question du jour`,body:'Sa réponse reste cachée jusqu’à ce que nous la découvrions ensemble.',page:'accueil',tag:'q'})}
+  else if((m=/^bn:(\d+)-(\d+)-(\d+):(p1|p2)$/.exec(k))){if(o&&m[4]!==o)continue;msgs.push({kind:'act',title:`${name} a laissé une note 📖`,body:'Sur '+verseRefOf(m),page:'bible',tag:'bn'})}
+  else if((m=/^bh:(\d+)-(\d+)-(\d+)$/.exec(k))){hl++;hlRef=verseRefOf(m)}
+  else if(!v||typeof v.title!=='string')continue;
+  else if(/^mt:/.test(k))msgs.push({kind:'act',title:`${name} a ajouté un thème`,body:v.title,page:'plans',tag:'mt'});
+  else if(/^mp:/.test(k))msgs.push({kind:'act',title:`${name} a créé un plan`,body:v.title,page:'plans',tag:'mp'});
+  else if(/^fin:e:/.test(k))msgs.push({kind:'act',title:`${name} a ajouté une sortie`,body:v.title+(v.hide?' 🎁':''),page:'depenses',tag:'fin'});
+  else if(/^ev:/.test(k))msgs.push({kind:'cal',title:`${name} a ajouté un moment au calendrier`,body:`${v.title} · ${fmtDate(v.date,{weekday:'long',day:'numeric',month:'long'})}`,page:'calendrier',tag:'ev'});
+  else if(/^pl:/.test(k))msgs.push({kind:'act',title:`${name} a ajouté une envie`,body:v.title,page:'plans',tag:'pl'});
+  else if(/^pj:/.test(k))msgs.push({kind:'act',title:`${name} a créé un projet`,body:v.title,page:'projets',tag:'pj'});
+ }
+ if(hl)msgs.push({kind:'act',title:hl>1?`${name} a surligné ${hl} versets`:`${name} a surligné un verset`,body:hl>1?'':hlRef,page:'bible',tag:'bh'});
+ const ok=msgs.filter(x=>p[x.kind]);if(!ok.length)return;
+ const one=ok.length===1?ok[0]:{title:`${name} : ${ok.length} nouveautés ♡`,body:ok.slice(0,4).map(x=>x.body?`${x.title.replace(name+' ','')} : ${x.body}`:x.title).join('\n'),page:ok[0].page,tag:'act'};
+ if(document.hidden)showNotif(one.title,one.body,one.page,one.tag);else toast(ok.length===1&&one.body?`${one.title} · ${one.body}`:one.title);
+}
+// Rappels programmés (8 prochains jours).
+function notifSchedule(){
+ const p=notifPrefs(),out=[];if(!p.on)return out;
+ const me=sync&&sync.me,now=new Date(),base=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ const at=(d,hm)=>{const [h,m]=hm.split(':').map(Number);return new Date(d.getFullYear(),d.getMonth(),d.getDate(),h,m).getTime()};
+ const dayAt=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+ if(p.q)for(let i=0;i<8;i++){const d=dayAt(base,i),k=dateKey(d),f=(state.qflags||{})[k]||{};
+  if(me?f['v'+me.slice(1)]:(f.v1&&f.v2))continue;
+  const qi=Math.abs(Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5))%questions.length;
+  out.push({id:'q:'+k,at:at(d,p.qh),kind:'q',title:'Notre question du jour 💬',body:questions[qi],page:'accueil'})}
+ if(p.cal)for(const e of state.events){const d=parseDate(e.date);if(!d)continue;const diff=dayDiff(base,d);if(diff<0||diff>8)continue;
+  const hm=/^\d{2}:\d{2}$/.test(e.time||'')?e.time:'',when=hm?' à '+hm.replace(':','h'):'';
+  out.push({id:'ev1:'+e.id+':'+e.date,at:at(dayAt(d,-1),'20:00'),kind:'cal',title:'Demain : '+e.title,body:fmtDate(e.date,{weekday:'long',day:'numeric',month:'long'})+when+(e.place?' · '+e.place:''),page:'calendrier'});
+  let t=at(d,'09:00');if(hm){const et=at(d,hm);if(et-3600e3<t)t=et-3600e3}
+  out.push({id:'ev0:'+e.id+':'+e.date,at:t,kind:'cal',title:'Aujourd’hui : '+e.title,body:hm?`À ${hm.replace(':','h')}${e.place?' · '+e.place:''} ♡`:'Un beau moment nous attend ♡',page:'calendrier'})}
+ if(p.sur)for(const r of state.finance.entries){if(!amountHidden(r))continue;const t=revealTime(r);if(!t)continue;out.push({id:'sur:'+r.id,at:+t,kind:'sur',title:'🎁 Une surprise se dévoile',body:r.title,page:'depenses'})}
+ const min=Date.now()-12*3600e3;return out.filter(x=>x.at>min).sort((a,b)=>a.at-b.at);
+}
+function notifUrl(n){return new URL(n,document.baseURI).href}
+function notifSyncSoon(force){clearTimeout(notifSyncT);notifSyncT=setTimeout(()=>notifWrite(force),1200)}
+async function notifWrite(force){
+ if(!window.caches)return;const p=notifPrefs();
+ const data=JSON.stringify({on:!!(p.on&&notifGranted()),items:p.on?notifSchedule():[],shown:notifShown()});
+ if(!force&&data===notifLast)return;notifLast=data;
+ try{const c=await caches.open(NOTIF_CACHE);await c.put(notifUrl('notif-schedule.json'),new Response(data,{headers:{'content-type':'application/json'}}))}catch(e){}
+}
+async function swShown(){try{if(!window.caches)return {};const c=await caches.open(NOTIF_CACHE);const r=await c.match(notifUrl('notif-shown-sw.json'));return r?await r.json():{}}catch(e){return {}}}
+async function notifTick(){
+ const p=notifPrefs();if(!p.on)return;
+ const now=Date.now(),shown={...notifShown(),...await swShown()};
+ const due=notifSchedule().filter(x=>x.at<=now&&x.at>now-6*3600e3&&!shown[x.id]);if(!due.length)return;
+ markShown(due.map(x=>x.id));
+ for(const x of due){if(x.kind==='sur')continue;if(document.hidden)await showNotif(x.title,x.body,x.page,x.id);else toast(`${x.title} · ${x.body}`)}
+ notifSyncSoon();
+}
+async function notifRegisterPeriodic(){
+ try{if(!navigator.serviceWorker)return;const reg=await navigator.serviceWorker.ready;if(!reg.periodicSync)return;
+  if(notifPrefs().on&&notifGranted()){let ok=true;try{const st=await navigator.permissions.query({name:'periodic-background-sync'});ok=st.state==='granted'}catch(e){}if(ok)await reg.periodicSync.register('adeux-rappels',{minInterval:3600e3})}
+  else await reg.periodicSync.unregister('adeux-rappels')}catch(e){}
+}
+async function notifEnable(){
+ if(!notifSupported()){toast('Ce navigateur ne permet pas les notifications.');return}
+ let perm=Notification.permission;if(perm==='default'){try{perm=await Notification.requestPermission()}catch(e){perm='denied'}}
+ if(perm!=='granted'){render();toast('Notifications refusées : on peut les autoriser dans les réglages du téléphone.');return}
+ const p=notifPrefs();p.on=true;setNotifPrefs(p);markShown(notifSchedule().filter(x=>x.at<=Date.now()).map(x=>x.id));
+ notifRegisterPeriodic();render();toast('Notifications activées ♡');showNotif('à deux. ♡','Les notifications sont activées sur ce téléphone.','parametres','test');
+}
+function notifCard(){
+ const p=notifPrefs(),sup=notifSupported(),perm=sup?Notification.permission:'unsupported',on=p.on&&perm==='granted',ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+ let body;
+ if(!sup)body=`<div class="notice">${ios?'Sur iPhone, les notifications ne marchent que dans l’appli installée (Safari → Partager → « Sur l’écran d’accueil », iOS 16.4 ou plus), ouverte depuis son icône.':'Ce navigateur ne permet pas les notifications.'}</div>`;
+ else if(perm==='denied')body='<div class="notice">Les notifications sont bloquées pour l’appli. Pour les autoriser : réglages du téléphone (ou du navigateur) → Notifications → à deux.</div>';
+ else if(!on)body='<button class="btn" data-notif="enable">🔔 Activer les notifications</button>';
+ else body=`<div class="notif-opts">${[['q','Question du jour','Un rappel si je n’ai pas encore répondu, puis quand ma moitié a répondu.'],['cal','Calendrier','La veille à 20 h et le jour même.'],['act','Activité de ma moitié','Notes, versets surlignés, thèmes, sorties, envies…'],['sur','Surprises révélées','Quand le montant d’une sortie surprise s’ouvre.']].map(([k,l,d])=>`<label class="check-line notif-line"><input type="checkbox" data-notif-pref="${k}" ${p[k]?'checked':''}><span><b>${l}</b><small>${d}</small></span></label>${k==='q'&&p.q?`<div class="field notif-hour"><label for="notifHour">Heure du rappel</label><input id="notifHour" type="time" data-notif-hour value="${esc(p.qh)}"></div>`:''}`).join('')}</div><div class="stack"><button class="btn secondary" data-notif="test">Tester</button><button class="btn secondary" data-notif="disable">Désactiver</button></div>`;
+ return `<section class="card settings-box" id="notifCard"><h3>Notifications 🔔</h3><p>Sur ce téléphone.${sync?'':' Pour suivre l’activité de ma moitié, il faut relier nos deux téléphones.'}</p>${body}<p class="notif-note">Sans serveur : les notifications arrivent quand l’appli est ouverte ou en arrière-plan. Appli fermée, Android (appli installée) peut en envoyer de temps en temps, sans heure garantie.</p></section>`;
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-notif]');if(!b)return;const a=b.dataset.notif;
+ if(a==='enable')notifEnable();
+ else if(a==='disable'){const p=notifPrefs();p.on=false;setNotifPrefs(p);notifRegisterPeriodic();render();toast('Notifications désactivées sur ce téléphone.')}
+ else if(a==='test')showNotif('à deux. ♡','Voici à quoi ressemblent nos notifications.','parametres','test').then(ok=>toast(ok?'Notification envoyée ♡':'Impossible d’afficher la notification.'))});
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.notifPref){const p=notifPrefs();p[t.dataset.notifPref]=t.checked;setNotifPrefs(p);if(t.dataset.notifPref==='q')render()}else if(t.dataset&&'notifHour' in t.dataset&&/^\d{2}:\d{2}$/.test(t.value)){const p=notifPrefs();p.qh=t.value;setNotifPrefs(p);toast('Rappel à '+t.value.replace(':','h')+' ♡')}});
+document.addEventListener('visibilitychange',()=>{notifTick();if(document.hidden)notifWrite(true)});
+if(navigator.serviceWorker&&navigator.serviceWorker.addEventListener)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&typeof e.data.adeuxGo==='string')go(e.data.adeuxGo)});
+setInterval(notifTick,30000);setTimeout(()=>{notifTick();notifRegisterPeriodic()},2500);
 const MODE_KEY='adeux-mode',modeMq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
 const modeIcons={sun:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>',moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M20 14.6A8.3 8.3 0 0 1 9.4 4a8.3 8.3 0 1 0 10.6 10.6Z"/></svg>'};
 function getMode(){try{const m=localStorage.getItem(MODE_KEY);return ['light','dark','auto'].includes(m)?m:'auto'}catch(e){return 'auto'}}
