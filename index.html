@@ -714,7 +714,7 @@ body.auth-open .app,body.auth-open #backdrop{display:none!important}
 .inf-btn{display:block;position:relative;width:100%;padding:0;border:0;background:none;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .inf-svg{display:block;width:100%;height:auto;overflow:visible}
 .inf-brins path{fill:none;stroke-width:7.4;stroke-linejoin:round}
-.inf-lui{stroke:#bf6c5c}.inf-elle{stroke:#d8c19b}.inf-dieu{stroke:#7fa3c9}
+.inf-lui{stroke:#D46F4D}.inf-elle{stroke:#d8c19b}.inf-dieu{stroke:#430C05}
 .inf-or0{stroke:#c89340}.inf-or1{stroke:#f0cd78}.inf-or2{stroke:#dcaa52}
 .inf-vide{stroke:var(--inf-vide)!important;stroke-width:11.2!important}
 .inf-lueur{fill:none;stroke:#f2be5c;stroke-width:22;stroke-linecap:round;opacity:.45;filter:url(#infFlou)}
@@ -2665,7 +2665,7 @@ setInterval(()=>{if(state.finance.entries.some(r=>r.hide)&&!document.querySelect
 
 /* ─── Mise à jour : si une nouvelle version a été publiée pendant que l’appli était ouverte, on le dit joyeusement.
    À CHAQUE PUBLICATION : changer APP_BUILD (ex. '2026-11-12.1'), sinon personne n’est prévenu. ─── */
-const APP_BUILD='2026-11-11.8';
+const APP_BUILD='2026-11-11.9';
 const majRt={last:0,later:null,busy:false};
 const MAJ_MSGS=[['🎁','Psst… du nouveau dans notre espace !','Une nouvelle version de « à deux. » vient d’arriver, avec quelques petites attentions glissées dedans. Un clic et c’est tout beau, tout neuf ♡'],['✨','Une mise à jour toute fraîche !','Notre espace à deux s’est fait beau pendant que nous avions le dos tourné. On recharge pour en profiter ?'],['🎉','Ta-da ! Une nouvelle version est là','Quelques nouveautés nous attendent. Ça ne prend qu’une seconde, et rien de ce que nous avons écrit ne se perd.']];
 async function majCheck(force){
