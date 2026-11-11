@@ -710,29 +710,36 @@ body.auth-open .app,body.auth-open #backdrop{display:none!important}
 /* ─── Le compteur infini ─── */
 .tresse-card{--inf-vide:#f8ebe5;--inf-vide:color-mix(in srgb,var(--brand-pale) 72%,#fff)}
 :root[data-scheme="dark"] .tr-fond{opacity:.4}:root[data-scheme="dark"] .fl-lune{opacity:.08}:root[data-scheme="dark"] .fl-petale{opacity:.35}:root[data-scheme="dark"] .tresse-card{--inf-vide:#372520}
-.inf-wrap{position:relative;max-width:640px;margin:6px auto 0}
-.inf-btn{display:block;position:relative;width:100%;padding:0;border:0;background:none;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.inf-svg{display:block;width:100%;height:auto;overflow:visible}
+.pl-haut{display:flex;justify-content:space-between;align-items:flex-end;gap:10px 24px;flex-wrap:wrap;margin-top:10px}
+.pl-jours,.pl-annee{display:flex;flex-direction:column}.pl-annee{align-items:flex-end;text-align:right}
+.inf-nb{font:500 clamp(52px,6.4vw,80px)/1 Georgia,serif;color:var(--brand-strong);letter-spacing:-.05em}
+.inf-an{font:500 clamp(19px,2vw,22px)/1.2 Georgia,serif;color:var(--ink)}
+.inf-txt{font-size:12px;color:var(--muted);margin-top:4px}
+.inf-wrap{position:relative;margin-top:18px}
+.pl-zone{display:block;width:100%;border:0;padding:14px 16px 6px;background:var(--paper);border-radius:18px;cursor:pointer;color:inherit;box-shadow:0 6px 18px #5a3b3410;-webkit-tap-highlight-color:transparent;transition:box-shadow .2s}
+.pl-zone:hover{box-shadow:0 8px 24px #5a3b341f}.pl-zone:active{transform:scale(.995)}
+.pl-svg{display:block;width:100%;height:auto;overflow:visible}.pl-S{display:none}
 .inf-brins path{fill:none;stroke-width:7.4;stroke-linejoin:round}
 .inf-lui{stroke:#D46F4D}.inf-elle{stroke:#d8c19b}.inf-dieu{stroke:#430C05}
-.inf-or0{stroke:#c89340}.inf-or1{stroke:#f0cd78}.inf-or2{stroke:#dcaa52}
-.inf-vide{stroke:var(--inf-vide)!important;stroke-width:11.2!important}
-.inf-lueur{fill:none;stroke:#f2be5c;stroke-width:22;stroke-linecap:round;opacity:.45;filter:url(#infFlou)}
-.inf-paillette{fill:#fff;opacity:0;animation:infBrille 3s ease-in-out infinite}
-@keyframes infBrille{0%,100%{opacity:0}45%,55%{opacity:.95}}
+.inf-vide{stroke:var(--paper)!important;stroke-width:11.2!important}
+.pl-bout{fill:#430C05}
+.pl-tick{stroke:var(--line);stroke-width:1}.pl-mois{font:10px Inter,ui-sans-serif,-apple-system,sans-serif;fill:var(--muted)}
 .inf-impulsion{opacity:0}
-.inf-centre{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;background:var(--paper);border-radius:999px;padding:10px 22px 9px;box-shadow:0 0 0 5px var(--inf-vide),0 8px 22px #5a3b3418;min-width:128px}
-.inf-nb{font:500 clamp(34px,4.6vw,46px)/1 Georgia,serif;color:var(--brand-strong);letter-spacing:-.04em}
-.inf-txt{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap}
-.inf-btn:hover .inf-centre{box-shadow:0 0 0 5px var(--inf-vide),0 10px 26px #5a3b3426}
-.inf-citation{position:absolute;left:50%;bottom:-6px;transform:translate(-50%,8px);opacity:0;pointer-events:none;transition:opacity .35s,transform .35s;background:var(--ink);color:var(--paper);font:italic 14px/1.4 Georgia,serif;padding:10px 16px;border-radius:14px;text-align:center;width:max-content;max-width:min(92%,360px);box-shadow:0 10px 26px #0000002a}
-.inf-citation small{display:block;font:600 10px Inter,ui-sans-serif,sans-serif;letter-spacing:.08em;text-transform:uppercase;opacity:.7;margin-top:4px;font-style:normal}
-.inf-citation.show{opacity:1;transform:translate(-50%,0)}
-.inf-bas{display:flex;justify-content:space-between;gap:6px 20px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--brand) 22%,transparent);font-size:12px;color:var(--muted)}
-.inf-bas strong{color:var(--ink);font-weight:600}
+.pl-etoile-halo{fill:#f6c565;opacity:.8;transform-box:fill-box;transform-origin:center;animation:infPouls 2.6s ease-in-out infinite}
+.pl-etoile-forme{fill:#f6cd6b;stroke:#fff;stroke-width:1.4;stroke-linejoin:round;transform-box:fill-box;transform-origin:center;animation:infScintille 2.6s ease-in-out infinite}
+@keyframes infScintille{0%,100%{transform:scale(.72) rotate(0);opacity:.85}50%{transform:scale(1.05) rotate(45deg);opacity:1}}
+@keyframes infPouls{0%,100%{transform:scale(.8);opacity:.5}50%{transform:scale(1.3);opacity:.95}}
+.inf-citation{position:absolute;left:50%;top:50%;transform:translate(-50%,-44%) scale(.96);opacity:0;pointer-events:none;transition:opacity .5s ease,transform .5s ease;display:flex;flex-direction:column;align-items:center;gap:6px;width:max-content;max-width:min(88%,400px);padding:18px 26px 16px;text-align:center;background:var(--paper);border:1px solid #d9b56c;border-radius:18px;box-shadow:0 0 0 5px color-mix(in srgb,var(--paper) 60%,transparent),0 18px 40px #5a3b3426}
+.inf-citation:before{content:"";position:absolute;inset:5px;border:1px dashed #d9b56c66;border-radius:14px;pointer-events:none}
+.inf-citation.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.inf-cit-orne{color:#c8943f;font-size:14px;letter-spacing:.4em;line-height:1}
+.inf-cit-texte{font:italic 500 clamp(15px,2.2vw,19px)/1.45 Georgia,serif;color:var(--ink)}
+.inf-cit-ref{font:700 10px Inter,ui-sans-serif,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#b0823a}
+.inf-bas{display:flex;justify-content:space-between;align-items:center;gap:6px 20px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--brand) 22%,transparent);font-size:12px;color:var(--muted)}
+.inf-bas strong{color:var(--ink);font-weight:600}.inf-astuce{color:#b0823a;font-weight:600}
 .tresse-card .fete-replay{display:block;margin:8px auto 0}
-@media(max-width:670px){.days-card.tresse-card{padding:22px 12px 16px}.inf-centre{padding:7px 14px 6px;min-width:96px}.inf-nb{font-size:30px}.inf-txt{font-size:10px}.inf-bas{flex-direction:column;align-items:center;text-align:center}.tresse-card>.mini-label{text-align:center}}
-@media(prefers-reduced-motion:reduce){.inf-paillette{animation:none;opacity:.6}}
+@media(max-width:670px){.days-card.tresse-card{padding:22px 14px 16px}.pl-L{display:none}.pl-S{display:block}.pl-zone{padding:10px 8px 4px}.inf-nb{font-size:56px}.inf-cit-texte{font-size:14.5px}.inf-citation{padding:14px 16px 12px}.inf-bas{flex-direction:column;align-items:center;text-align:center}.tresse-card>.mini-label{text-align:center}}
+@media(prefers-reduced-motion:reduce){.inf-citation{transition:none}}
 </style>
 </head>
 <body>
@@ -937,47 +944,45 @@ function cercleStats(since){
  const end=cercleAnniv(since,since.getFullYear()+y+1),elapsed=dayDiff(start,today),total=dayDiff(start,end);
  return {valid:true,year:y+1,progress:Math.min(1,Math.max(0,elapsed/total)),elapsed,total,start};
 }
-const INF=(()=>{const N=1500,C=[300,128],a=262,PI=Math.PI,c=[];
- // Lemniscate de Bernoulli, parcourue depuis le centre
- for(let i=0;i<=N;i++){const t=PI/2+2*PI*i/N,d=1+Math.sin(t)**2;c.push([C[0]+a*Math.cos(t)/d,C[1]+a*Math.sin(t)*Math.cos(t)/d])}
- const s=[0];for(let i=1;i<=N;i++)s.push(s[i-1]+Math.hypot(c[i][0]-c[i-1][0],c[i][1]-c[i-1][1]));
- const L=s[N],nrm=c.map((p,i)=>{const q=c[Math.min(N,i+1)],o=c[Math.max(0,i-1)],dx=q[0]-o[0],dy=q[1]-o[1],l=Math.hypot(dx,dy)||1;return [-dy/l,dx/l]});
- const dist=s.map(v=>Math.min(v,Math.abs(v-L/2),L-v)/(L/4)); // 0 au centre → 1 au bout des boucles
- const pd=a=>a.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join('');
- return {N,c,nrm,dist,pd,L,centre:pd(c)}})();
-const infCache={};
-function infiniBrins(p){
- const key=Math.round(p*400);if(infCache[key])return infCache[key];
- const {N,c,nrm,dist,pd}=INF,PI=Math.PI,TW=25,A=8.2,W=7.4,pts=[[],[],[]],gold=[];
- for(let i=0;i<=N;i++){const g=Math.min(1,Math.max(0,(.15+p*.87-dist[i])/.05));gold.push(g>.5);const amp=A*(1-.42*g); // les brins se rapprochent (fusionnent) dans l’or
-  for(let j=0;j<3;j++){const ph=i/N*2*PI*TW+j*2*PI/3,o=amp*Math.sin(ph);pts[j].push([c[i][0]+nrm[i][0]*o,c[i][1]+nrm[i][1]*o,Math.sin(2*ph),o])}}
- const cls=['inf-lui','inf-elle','inf-dieu'];
- const seg=(j,a,b)=>{a=Math.max(0,a);b=Math.min(N,b);const out=[];let st=a;for(let i=a+1;i<=b;i++)if(i===b||gold[i]!==gold[st]){out.push([pd(pts[j].slice(st,i+1)),gold[st]?`inf-or inf-or${j}`:cls[j]]);st=i}return out};
- let s='';for(let j=0;j<3;j++)for(const [d,k] of seg(j,0,N))s+=`<path d="${d}" class="${k}"/>`;
+// Rendu d’un tronçon de cordon (style logo) : brins pleins, et à chaque croisement le brin du dessus est redessiné avec un liseré de vide
+function infTroncon(pts,a,b,pd){const N=pts[0].length-1;a=Math.max(0,a);b=Math.min(N,b);const cls=['inf-lui','inf-elle','inf-dieu'];let s='';
+ for(let j=0;j<3;j++)s+=`<path d="${pd(pts[j].slice(a,b+1))}" class="${cls[j]}"/>`;
  const X=[],hl=18;
- for(const [j,k] of [[0,1],[1,2],[0,2]])for(let i=1;i<=N;i++){const u=pts[j][i-1][3]-pts[k][i-1][3],v=pts[j][i][3]-pts[k][i][3];if(u===0||u*v<0){const top=pts[j][i][2]>pts[k][i][2]?j:k;X.push({i,top,z:pts[top][i][2]})}}
+ for(const [j,k] of [[0,1],[1,2],[0,2]])for(let i=a+1;i<=b;i++){const u=pts[j][i-1][3]-pts[k][i-1][3],v=pts[j][i][3]-pts[k][i][3];if(u===0||u*v<0){const top=pts[j][i][2]>pts[k][i][2]?j:k;X.push({i,top,z:pts[top][i][2]})}}
  X.sort((x,y)=>x.z-y.z);
- for(const x of X){s+=`<path d="${pd(pts[x.top].slice(Math.max(0,x.i-hl),Math.min(N,x.i+hl)+1))}" class="inf-vide"/>`;for(const [d,k] of seg(x.top,x.i-hl-4,x.i+hl+4))s+=`<path d="${d}" class="${k}"/>`}
- // Lueur sous l’or + paillettes
- let glow='',spark='';const runs=[];let st=-1;for(let i=0;i<=N;i++){if(gold[i]&&st<0)st=i;if((!gold[i]||i===N)&&st>=0){runs.push([st,i]);st=-1}}
- for(const [a,b] of runs)glow+=`<path d="${pd(c.slice(a,b+1))}" class="inf-lueur"/>`;
- for(let k=0;k<44;k++){const i=Math.round((k*397)%N);if(!gold[i])continue;const o=((k*53)%11-5),q=[c[i][0]+nrm[i][0]*o,c[i][1]+nrm[i][1]*o];spark+=`<path d="M${q[0].toFixed(1)} ${(q[1]-4).toFixed(1)}l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" class="inf-paillette" style="animation-delay:${((k*0.37)%3).toFixed(2)}s"/>`}
- return infCache[key]=`<g class="inf-lueurs">${glow}</g><g class="inf-brins">${s}</g><g>${spark}</g>`}
+ for(const x of X){const lo=Math.max(a,x.i-hl),hi=Math.min(b,x.i+hl);s+=`<path d="${pd(pts[x.top].slice(lo,hi+1))}" class="inf-vide"/><path d="${pd(pts[x.top].slice(Math.max(a,lo-4),Math.min(b,hi+4)+1))}" class="${cls[x.top]}"/>`}
+ return s}
+const platCache={};
+// Corde posée à plat, d’un anniversaire au suivant
+function cordePlate(st,{id,len,tw,every}){
+ const x0=26,x1=len-26,y0=34,span=x1-x0,N=Math.round(span*1.6),PI=Math.PI,A=8.2,pts=[[],[],[]],pd=a=>a.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join('');
+ if(!platCache[id]){for(let i=0;i<=N;i++)for(let j=0;j<3;j++){const ph=i/N*2*PI*tw+j*2*PI/3,o=A*Math.sin(ph);pts[j].push([x0+i/N*span,y0+o,Math.sin(2*ph),o])}platCache[id]=infTroncon(pts,0,N,pd)}
+ const p=st.valid?st.progress:0,jx=x0+p*span;
+ let ticks='',labels='';const fmt=new Intl.DateTimeFormat('fr-FR',{month:'short'});
+ if(st.valid){const marks=[0];for(let k=1;k<12;k++){const d=new Date(st.start.getFullYear(),st.start.getMonth()+k,1);marks.push(dayDiff(st.start,d)/st.total)}marks.push(1);
+  marks.forEach((f,k)=>{const x=x0+f*span;ticks+=`<line x1="${x.toFixed(1)}" x2="${x.toFixed(1)}" y1="${y0+18}" y2="${y0+(k%3?22:26)}" class="pl-tick"/>`;
+   if(k<12&&k%every===0){const d=new Date(st.start.getFullYear(),st.start.getMonth()+k,1),mid=x0+(f+(marks[k+1]-f)/2)*span;labels+=`<text x="${mid.toFixed(1)}" y="${y0+38}" text-anchor="middle" class="pl-mois">${esc(fmt.format(d).replace('.',''))}</text>`}})}
+ const cap=x=>`<circle cx="${x}" cy="${y0}" r="5.5" class="pl-bout"/>`,dur=(1+p*2.4).toFixed(2);
+ const etoile=st.valid?`<g transform="translate(${jx.toFixed(1)} ${y0})" class="pl-etoile"><circle r="15" class="pl-etoile-halo" filter="url(#plHalo${id})"/><path d="M0-14L2.4-2.4 14 0 2.4 2.4 0 14-2.4 2.4-14 0-2.4-2.4Z" class="pl-etoile-forme"/><circle r="2.2" fill="#fff"/></g>`:'';
+ return `<svg class="pl-svg pl-${id}" viewBox="0 -6 ${len} ${y0+46}" aria-hidden="true" focusable="false"><defs><filter id="plHalo${id}" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="5"/></filter></defs>${ticks}${labels}<g class="inf-brins">${platCache[id]}</g>${cap(x0-7)}${cap(x1+7)}
+<g class="inf-impulsion"><circle r="12" fill="#ffd98a" filter="url(#plHalo${id})"/><circle r="4.5" fill="#fff"/><animateMotion class="pl-pulse" dur="${dur}s" begin="indefinite" fill="remove" path="M${x0} ${y0}H${Math.max(x0+1,jx).toFixed(1)}"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.06;.9;1" dur="${dur}s" begin="indefinite" fill="remove" class="pl-pulse"/></g>${etoile}</svg>`}
 function infiniCorde(since,daysHtml,daysText){
- const st=cercleStats(since),p=st.valid?st.progress:0,n=since?dayDiff(since,today)+1:0,jalon=st.valid&&n>0&&n%10===0;
- let auto='';if(jalon){try{if(localStorage.getItem('adeux-impulsion')!==todayKey){localStorage.setItem('adeux-impulsion',todayKey);auto=';1.2s'}}catch(e){}}
- const label=`Cordon à trois fils en forme d’infini${st.valid?`, doré à ${Math.round(p*100)} % pour notre année ${st.year}`:''}. Touchez pour lire la citation.`;
- return `<div class="inf-wrap"><button type="button" class="inf-btn" data-action="cordon" aria-label="${esc(label)}"><svg class="inf-svg" viewBox="0 0 600 256" aria-hidden="true" focusable="false"><defs><filter id="infFlou" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="5"/></filter><filter id="infHalo" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="4"/></filter><path id="infChemin" d="${INF.centre}"/></defs>${infiniBrins(p)}
-<g class="inf-impulsion"><circle r="11" fill="#ffe3a0" filter="url(#infHalo)"/><circle r="4.5" fill="#fff"/><animateMotion id="infPulse" dur="2.8s" begin="indefinite${auto}" fill="remove" rotate="auto"><mpath href="#infChemin"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.9;1" dur="2.8s" begin="infPulse.begin" fill="remove"/></g></svg>
-<span class="inf-centre"><span class="inf-nb">${daysHtml}</span><span class="inf-txt">${n>1?'jours ensemble':n===1?'premier jour ensemble':esc(daysText)}</span></span></button><div class="inf-citation" role="status" aria-live="polite"></div></div>`}
-function cordonAction(btn){const svg=btn.querySelector('.inf-svg'),an=svg&&svg.querySelector('#infPulse'),cit=btn.parentElement.querySelector('.inf-citation');
- try{an&&an.beginElement()}catch(e){}
- if(cit){cit.innerHTML='«&nbsp;Un cordon à trois fils ne se rompt pas facilement.&nbsp;»<small>Ecclésiaste 4:12</small>';cit.classList.add('show');clearTimeout(cit._t);cit._t=setTimeout(()=>cit.classList.remove('show'),4800)}}
+ const st=cercleStats(since),n=since?dayDiff(since,today)+1:0,jalon=st.valid&&n>0&&n%10===0;
+ let auto=false;if(jalon){try{if(localStorage.getItem('adeux-impulsion')!==todayKey){localStorage.setItem('adeux-impulsion',todayKey);auto=true}}catch(e){}}
+ const label=st.valid?`Notre corde : jour ${st.elapsed+1} sur ${st.total} de notre année ${st.year}. Touchez pour la lumière et la citation.`:'Notre corde. Touchez pour la citation.';
+ return `<div class="pl-haut"><div class="pl-jours"><span class="inf-nb">${daysHtml}</span><span class="inf-txt">${n>1?'jours ensemble':n===1?'premier jour ensemble':esc(daysText)}</span></div>${st.valid?`<div class="pl-annee"><span class="inf-an">Année ${st.year}</span><span class="inf-txt">jour ${st.elapsed+1} sur ${st.total}</span></div>`:''}</div>
+<div class="inf-wrap pl-wrap${auto?' pl-auto':''}"><button type="button" class="pl-zone" data-action="cordon" aria-label="${esc(label)}">${cordePlate(st,{id:'L',len:1000,tw:17,every:1})}${cordePlate(st,{id:'S',len:360,tw:6,every:3})}</button><div class="inf-citation" role="status" aria-live="polite"></div></div>`}
+function cordonAction(btn){const w=btn.closest('.inf-wrap'),cit=w&&w.querySelector('.inf-citation');
+ if(w)w.querySelectorAll('.pl-pulse').forEach(a=>{try{a.beginElement()}catch(e){}});
+ if(cit){clearTimeout(cit._t);cit.classList.remove('show');void cit.offsetWidth;
+  cit.innerHTML='<span class="inf-cit-orne" aria-hidden="true">✦</span><span class="inf-cit-texte">«&nbsp;Un cordon à trois fils ne se rompt pas facilement.&nbsp;»</span><span class="inf-cit-ref">Ecclésiaste 4:12</span>';
+  cit._t=setTimeout(()=>{cit.classList.add('show');cit._t=setTimeout(()=>cit.classList.remove('show'),5200)},700)}}
+// Impulsion automatique tous les 10 jours (une fois par jour), après l’affichage
+setTimeout(function infAuto(){const w=document.querySelector('.pl-auto');if(w){w.classList.remove('pl-auto');w.querySelectorAll('.pl-pulse').forEach(a=>{try{a.beginElement()}catch(e){}})}},1500);
 function infiniResume(since,anniversary){
  const st=cercleStats(since),rest=st.total-st.elapsed;
- if(!st.valid)return `<div class="inf-bas"><span>Choisissons notre date dans les paramètres pour voir l’or grandir ♡</span></div>`;
- const pct=Math.round(st.progress*100);
- return `<div class="inf-bas"><span><strong>Notre année ${st.year}</strong> · l’infini est doré à ${pct} %</span><span>${st.elapsed===0?(st.year>1?'Joyeux anniversaire ♡ Un nouvel infini commence':'Notre premier jour ♡'):`Encore <strong>${rest} jour${rest>1?'s':''}</strong> avant notre anniversaire, le ${esc(anniversary)}`}</span></div>`}
+ if(!st.valid)return `<div class="inf-bas"><span>Choisissons notre date dans les paramètres ♡</span></div>`;
+ return `<div class="inf-bas"><span>${st.elapsed===0?(st.year>1?'Joyeux anniversaire ♡ Une nouvelle corde commence aujourd’hui':'Notre premier jour ♡ Notre corde commence aujourd’hui'):`Encore <strong>${rest} jour${rest>1?'s':''}</strong> avant notre anniversaire, le ${esc(anniversary)}`}</span><span class="inf-astuce">Touchez la corde ✦</span></div>`}
 // Fond fleuri de la carte (aplats discrets et semi-transparents : vagues, lune, feuilles, marguerites, lavande)
 const TRESSE_DECOR=(()=>{const leaf=(x,y,rx,ry,rot,c)=>`<g transform="rotate(${rot} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" class="${c}"/><path d="M${x} ${y-ry+3}V${y+ry-3}${[-.45,-.1,.25].map(f=>`M${x} ${y+ry*f}l${-rx*.6} ${-ry*.22}M${x} ${y+ry*f}l${rx*.6} ${-ry*.22}`).join('')}" class="fl-nervure"/></g>`;
  const daisy=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})">${[0,60,120,180,240,300].map(a=>`<ellipse cy="-15" rx="8" ry="14" transform="rotate(${a})" class="fl-petale"/>`).join('')}<circle r="7" class="fl-coeur"/></g>`;
@@ -2665,7 +2670,7 @@ setInterval(()=>{if(state.finance.entries.some(r=>r.hide)&&!document.querySelect
 
 /* ─── Mise à jour : si une nouvelle version a été publiée pendant que l’appli était ouverte, on le dit joyeusement.
    À CHAQUE PUBLICATION : changer APP_BUILD (ex. '2026-11-12.1'), sinon personne n’est prévenu. ─── */
-const APP_BUILD='2026-11-11.9';
+const APP_BUILD='2026-11-11.10';
 const majRt={last:0,later:null,busy:false};
 const MAJ_MSGS=[['🎁','Psst… du nouveau dans notre espace !','Une nouvelle version de « à deux. » vient d’arriver, avec quelques petites attentions glissées dedans. Un clic et c’est tout beau, tout neuf ♡'],['✨','Une mise à jour toute fraîche !','Notre espace à deux s’est fait beau pendant que nous avions le dos tourné. On recharge pour en profiter ?'],['🎉','Ta-da ! Une nouvelle version est là','Quelques nouveautés nous attendent. Ça ne prend qu’une seconde, et rien de ce que nous avons écrit ne se perd.']];
 async function majCheck(force){
