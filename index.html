@@ -868,8 +868,14 @@ const KEY='adeux-couple-v1';
 const defaultState=()=>({settings:{p1:'Personne 1',p2:'Personne 2',bio1:'',bio2:'',since:'',theme:'rose',lumiere:'or'},events:[],plans:[],projects:[],answers:{},prayers:{},finance:{budgets:{mini:80,big:200},overrides:{},budgetChanges:[],entries:[]},carnet:{notes:{},done:{},budget:{},bigDate:null},myplans:[],bible:{hl:{},notes:{}},qflags:{},qreact:{},foi:{done:{},notes:{},paths:[],py:[],prayed:{}},photos:{p1:'',p2:''}});
 let canStore=true;
 let loadBroken=false;
-function load(){let raw=null;try{raw=localStorage.getItem(KEY);if(!raw)return defaultState();const obj=JSON.parse(raw);if(!obj||typeof obj!=='object')throw Error('Invalid data');const def=defaultState();return {...def,...obj,settings:{...def.settings,...(obj.settings||{})},events:Array.isArray(obj.events)?obj.events:[],plans:Array.isArray(obj.plans)?obj.plans:[],projects:Array.isArray(obj.projects)?obj.projects:[],answers:(obj.answers&&typeof obj.answers==='object')?obj.answers:{},prayers:(obj.prayers&&typeof obj.prayers==='object')?obj.prayers:{},finance:(obj.finance&&typeof obj.finance==='object')?obj.finance:def.finance,photos:sanitizePhotos(obj.photos)}}catch(e){if(e instanceof DOMException)canStore=false;if(raw){loadBroken=true;console.warn('Chargement',e);try{localStorage.setItem(KEY+'-secours',raw)}catch(_){}}return defaultState()}}
-let state=load();function save(){try{localStorage.setItem(KEY,JSON.stringify(state));canStore=true}catch(e){canStore=false;toast('Sauvegarde indisponible : pensons à exporter nos données.')}syncAfterSave()}
+function load(){let raw=null;try{raw=localStorage.getItem(KEY);if(!raw)return defaultState();const obj=JSON.parse(raw);if(!obj||typeof obj!=='object')throw Error('Invalid data');const def=defaultState();return {...def,...obj,settings:{...def.settings,...(obj.settings||{})},events:Array.isArray(obj.events)?obj.events:[],plans:Array.isArray(obj.plans)?obj.plans:[],projects:Array.isArray(obj.projects)?obj.projects:[],answers:(obj.answers&&typeof obj.answers==='object')?obj.answers:{},prayers:(obj.prayers&&typeof obj.prayers==='object')?obj.prayers:{},finance:(obj.finance&&typeof obj.finance==='object')?obj.finance:def.finance,photos:sanitizePhotos(obj.photos)}}catch(e){if(e instanceof DOMException)canStore=false;if(raw){loadBroken=true;console.warn('Chargement',e);try{localStorage.setItem(KEY+'-secours',raw);localStorage.setItem(KEY+'-secours-t',String(Date.now()))}catch(_){}}return defaultState()}}
+let state=load();
+// Sauvegarde regroupée : pendant qu'on tape, on n'écrit pas tout le carnet à chaque touche, mais une fois la frappe posée.
+let saveTimer=null;
+function save(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,400)}
+function saveNow(){clearTimeout(saveTimer);saveTimer=null;try{localStorage.setItem(KEY,JSON.stringify(state));canStore=true}catch(e){canStore=false;toast('Sauvegarde indisponible : pensons à exporter nos données.')}syncAfterSave()}
+function flushSave(){if(saveTimer)saveNow()}
+addEventListener('pagehide',flushSave);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushSave()});
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
 const icons={arrow:'<svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>',plus:'<svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',calendar:'<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>',heart:'<svg class="icon" viewBox="0 0 24 24"><path d="M20.8 4.7a5.6 5.6 0 0 0-7.9 0l-.9.9-.9-.9a5.6 5.6 0 1 0-7.9 7.9l.9.9L12 21l7.9-7.5.9-.9a5.6 5.6 0 0 0 0-7.9Z"/></svg>',trash:'<svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2m3 0-1 15H6L5 6M10 10v7M14 10v7"/></svg>',edit:'<svg class="icon" viewBox="0 0 24 24"><path d="M13 6l5 5M4 20l4-.8L20 7a2.1 2.1 0 0 0-3-3L5 16Z"/></svg>',book:'<svg class="icon" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h14v18H6a2 2 0 0 1-2-2Z"/><path d="M4 19a2 2 0 0 1 2-2h14"/></svg>',check:'<svg class="icon" viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></svg>',chevronL:'<svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>',chevronR:'<svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>',spark:'<svg class="icon" viewBox="0 0 24 24"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8ZM19 17l.6 2.4L22 20l-2.4.6L19 23l-.6-2.4L16 20l2.4-.6Z"/></svg>'};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -2054,6 +2060,23 @@ function syncAfterSave(){
  if(changed){saveSyncMeta();scheduleFlush();updateSyncPill()}
 }
 function queuePush(k){if(!sync.pending.includes(k))sync.pending.push(k)}
+// Ménage : un élément supprimé laisse une trace (pour prévenir l'autre téléphone). Après 7 jours, on l'efface d'ici et de l'espace partagé.
+const PURGE_AGE=7*864e5,PURGE_KEY='adeux-menage';
+async function purgeOld(){
+ const now=Date.now();
+ try{const t=Number(localStorage.getItem(KEY+'-secours-t'));if(localStorage.getItem(KEY+'-secours')!==null){if(!t)localStorage.setItem(KEY+'-secours-t',String(now));else if(now-t>PURGE_AGE){localStorage.removeItem(KEY+'-secours');localStorage.removeItem(KEY+'-secours-t')}}}catch(e){}
+ if(!sync||!syncRt.backend||!syncRt.crypto||!syncRt.backend.del)return;
+ try{if(now-Number(localStorage.getItem(PURGE_KEY)||0)<864e5)return}catch(e){}
+ const limit=syncNow()-PURGE_AGE,old=Object.entries(sync.items).filter(([k,it])=>it&&it.h===null&&it.t<limit&&!sync.pending.includes(k)).map(([k])=>k);
+ if(old.length){
+  const be=syncRt.backend,keys=await Promise.all(old.map(k=>dbKey(k))),jobs=[];
+  if(!sync||syncRt.backend!==be)return;
+  old.forEach((k,i)=>{const it=sync.items[k];if(it&&it.h===null&&it.t<limit){jobs.push(be.del(keys[i],it.t));delete sync.items[k];delete syncRt.seen[k]}});
+  saveSyncMeta();
+  await Promise.allSettled(jobs);
+ }
+ try{localStorage.setItem(PURGE_KEY,String(now))}catch(e){}
+}
 function scheduleFlush(){clearTimeout(syncRt.flushTimer);syncRt.flushTimer=setTimeout(flushSync,300)}
 async function flushSync(){
  if(!sync||!syncRt.backend||!syncRt.crypto)return;
@@ -2076,6 +2099,7 @@ async function flushSync(){
 function onRemoteItem(raw){syncRt.queue.push(raw);if(!syncRt.queueTimer)syncRt.queueTimer=setTimeout(processRemote,60)}
 async function processRemote(){
  syncRt.queueTimer=null;if(!sync||!syncRt.crypto){syncRt.queue=[];return}
+ flushSave();
  const batch=syncRt.queue.splice(0);let changed=false,resend=false;const acts=[];
  for(const r of batch){
   try{
@@ -2198,7 +2222,7 @@ async function syncStart(){
  try{
   syncRt.crypto=await deriveSync(sync.code);
   syncRt.backend=await factory(syncRt.crypto.room,sync.device,{
-   connected:c=>{if(syncRt.status!=='error'||c)setSyncStatus(c?'online':'offline');if(c)scheduleFlush()},
+   connected:c=>{if(syncRt.status!=='error'||c)setSyncStatus(c?'online':'offline');if(c){scheduleFlush();setTimeout(()=>purgeOld().catch(e=>console.warn('Ménage',e)),20000)}},
    denied:()=>setSyncStatus('error','Accès à notre espace refusé : il faut se reconnecter'),
    offset:o=>{syncRt.offset=Number(o)||0},
    item:onRemoteItem,
@@ -2207,7 +2231,7 @@ async function syncStart(){
   scheduleFlush();
  }catch(e){console.warn('Synchronisation',e);setSyncStatus('error','Connexion à notre espace impossible')}
 }
-function syncStop(){try{stopTyping();syncRt.backend&&syncRt.backend.close()}catch(e){}syncRt.backend=null;syncRt.crypto=null;syncRt.typing={};syncRt.queue=[];syncRt.seen={}}
+function syncStop(){flushSave();try{stopTyping();syncRt.backend&&syncRt.backend.close()}catch(e){}syncRt.backend=null;syncRt.crypto=null;syncRt.typing={};syncRt.queue=[];syncRt.seen={}}
 async function createSpace(me){
  if(!syncFactory()){toast('La synchronisation n’est pas encore configurée.');return}
  const code=newCode();
@@ -2513,6 +2537,8 @@ async function firebaseBackend(room,device,h){
  D.onDisconnect(meRef).remove();
  return {
   put:(k,val)=>D.set(D.ref(db,path+'/items/'+k),val),
+  // Efface la trace seulement si personne ne l'a remplacée entre-temps (même date d'écriture).
+  del:(k,t)=>D.runTransaction(D.ref(db,path+'/items/'+k),cur=>cur===null||(cur&&cur.t===t)?null:undefined,{applyLocally:false}),
   typing:val=>val?D.set(meRef,{v:val.v,t:D.serverTimestamp()}):D.remove(meRef),
   count:()=>D.get(itemsRef).then(s=>s.size),
   close:()=>{offs.forEach(off=>off());D.remove(meRef).catch(()=>{})}
@@ -2758,7 +2784,7 @@ setInterval(()=>{if(state.finance.entries.some(r=>r.hide)&&!document.querySelect
 
 /* ─── Mise à jour : si une nouvelle version a été publiée pendant que l’appli était ouverte, on le dit joyeusement.
    À CHAQUE PUBLICATION : changer APP_BUILD (ex. '2026-11-12.1'), sinon personne n’est prévenu. ─── */
-const APP_BUILD='2026-11-12.1';
+const APP_BUILD='2026-11-25.1';
 const majRt={last:0,later:null,busy:false};
 const MAJ_MSGS=[['🎁','Psst… du nouveau dans notre espace !','Une nouvelle version de « à deux. » vient d’arriver, avec quelques petites attentions glissées dedans. Un clic et c’est tout beau, tout neuf ♡'],['✨','Une mise à jour toute fraîche !','Notre espace à deux s’est fait beau pendant que nous avions le dos tourné. On recharge pour en profiter ?'],['🎉','Ta-da ! Une nouvelle version est là','Quelques nouveautés nous attendent. Ça ne prend qu’une seconde, et rien de ce que nous avons écrit ne se perd.']];
 async function majCheck(force){
